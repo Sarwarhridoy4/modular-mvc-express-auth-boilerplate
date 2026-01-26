@@ -29,7 +29,7 @@ app.use("/api/v1", router);
 app.get("/", (_req: Request, res: Response) => {
   res
     .status(StatusCodes.OK)
-    .json({ message: "Welcome! Gretings From Sarwar Hossain!!" });
+    .json({ message: "welcome to the Inventory Management System API" });
 });
 
 // 404 Handler
