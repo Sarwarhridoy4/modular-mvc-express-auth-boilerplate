@@ -5,6 +5,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { prisma } from "../../config/db";
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../helpers/errorHelper/AppError";
+import { verifyToken } from "../../utils/jwt";
 
 export const checkAuth =
   (...authRoles: string[]) =>
@@ -41,7 +42,6 @@ export const checkAuth =
         id: user.id,
         email: user.email,
         role: user.role,
-        provider: user.provider,
         name: user.name,
       };
 

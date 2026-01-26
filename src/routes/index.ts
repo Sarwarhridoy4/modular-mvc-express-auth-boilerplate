@@ -1,8 +1,27 @@
-import { Router, type Request, type Response } from "express";
+import { Router} from "express";
+import { UserRoutes } from "../app/modules/user/user.route";
+import { AuthRoutes } from "../app/modules/auth/auth.route";
+
 
 export const router = Router();
 
-router.get("/", (_req: Request, res: Response) => {
-  res.send("Welcome to the Inventory Management System API");
+const moduleRoutes = [
+ 
+  {
+    path: "/users",
+    route: UserRoutes,
+  },
+  {
+    path: "/auth",
+    route: AuthRoutes,
+  }
+
+];
+
+moduleRoutes.forEach((route) => {
+  router.use(route.path, route.route);
 });
+
+
+
 
