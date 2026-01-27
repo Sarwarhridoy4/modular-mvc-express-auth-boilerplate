@@ -64,6 +64,8 @@ const loginWithEmailAndPassword = async (
   const { password, ...safeUser } = user;
   return { ...safeUser, tokens };
 };
+
+
 export default {
   signupUser,
   loginWithEmailAndPassword,

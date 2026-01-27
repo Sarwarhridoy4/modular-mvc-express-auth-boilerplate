@@ -20,4 +20,5 @@ const getAllUsers = catchAsync(async (_req: Request, res: Response) => {
 
 export default {
   getAllUsers,
+ 
 };

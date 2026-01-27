@@ -13,4 +13,9 @@ export const env = {
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_TOKEN_SECRET || "your_refresh_token_secret",
     JWT_EXPIRES_IN: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || "15m",
     JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || "7d",
+    SMTP_HOST: process.env.SMTP_HOST || "smtp.gmail.com",
+    SMTP_PORT: process.env.SMTP_PORT || "587",
+    SMTP_USER: process.env.SMTP_USER || "",
+    SMTP_PASSWORD: process.env.SMTP_PASSWORD || "",
+    EMAIL_FROM: process.env.EMAIL_FROM || "lutfurrahamn737@gmail.com",
 };
