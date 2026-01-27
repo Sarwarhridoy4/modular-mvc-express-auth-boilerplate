@@ -1,5 +1,5 @@
 // middlewares/errorHandler.ts
-import {type Request,type Response,type NextFunction } from "express";
+import {type Response } from "express";
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 import jwt from "jsonwebtoken";
@@ -10,9 +10,7 @@ import AppError from "../../helpers/errorHelper/AppError";
 
 export const globalErrorHandler = (
   err: unknown,
-  req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
   console.error("🔥 Global Error:", err);
 
@@ -58,5 +56,5 @@ export const globalErrorHandler = (
 
   // Fallback for unknown errors
   const message = err instanceof Error ? err.message : "Internal Server Error";
-  res.status(500).json({ success: false, message });
+  return res.status(500).json({ success: false, message });
 };
