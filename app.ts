@@ -3,11 +3,11 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import express, { type Request, type Response, type Application } from "express";
 import { StatusCodes } from "http-status-codes";
-import { router } from "./src/routes/index";
+import { router } from "./src/routes/index.js";
 
-import { env } from "./src/config/env";
-import notFound from "./src/app/middleware/notFound";
-import { globalErrorHandler } from "./src/app/middleware/globalErrorHandler";
+import { env } from "./src/config/env.js";
+import notFound from "./src/app/middleware/notFound.js";
+import { globalErrorHandler } from "./src/app/middleware/globalErrorHandler.js";
 
 const app: Application = express();
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import userController from "./user.controller";
-import { checkAuth } from "../../middleware/CheckAuth";
+import userController from './user.controller.js';
+import { checkAuth } from '../../middleware/CheckAuth.js';
 import { UserRole } from "@prisma/client";
 
 

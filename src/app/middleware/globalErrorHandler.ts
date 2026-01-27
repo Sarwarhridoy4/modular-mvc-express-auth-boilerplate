@@ -3,7 +3,7 @@ import {type Response } from "express";
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 import jwt from "jsonwebtoken";
-import AppError from "../../helpers/errorHelper/AppError";
+import AppError from '../../helpers/errorHelper/AppError.js';
 
 
 

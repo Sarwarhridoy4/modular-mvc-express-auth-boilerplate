@@ -1,11 +1,11 @@
 import { UserRole } from "@prisma/client";
 import bcryptjs from "bcryptjs";
-import { env } from "../../../config/env";
-import AppError from "../../../helpers/errorHelper/AppError";
-import { LoginPayload, SignupPayload, UserWithTokens } from "./auth.type";
+import { env } from '../../../config/env.js';
+import AppError from '../../../helpers/errorHelper/AppError.js';
+import { LoginPayload, SignupPayload, UserWithTokens } from './auth.type.js';
 import { StatusCodes } from "http-status-codes";
-import { createUserTokens } from "../../../utils/userTokens";
-import { prisma } from "../../../config/db";
+import { createUserTokens } from '../../../utils/userTokens.js';
+import { prisma } from '../../../config/db.js';
 
 const signupUser = async (payload: SignupPayload) => {
   const existingUser = await prisma.user.findUnique({

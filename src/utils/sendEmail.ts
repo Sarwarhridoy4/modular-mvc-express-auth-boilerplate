@@ -4,8 +4,8 @@
 import ejs from "ejs";
 import path from "path";
 import nodemailer from "nodemailer";
-import AppError from "../helpers/errorHelper/AppError";
-import { env } from "../config/env";
+import AppError from '../helpers/errorHelper/AppError.js';
+import { env } from '../config/env.js';
 
 // Create transporter with SMTP configuration
 const transporter = nodemailer.createTransport({

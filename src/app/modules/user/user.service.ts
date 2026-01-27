@@ -1,5 +1,5 @@
-import { SafeUser } from "./user.type";
-import { prisma } from "../../../config/db";
+import { SafeUser } from './user.type.js';
+import { prisma } from '../../../config/db.js';
 
 const getAllUsers = async (): Promise<SafeUser[]> => {
   return prisma.user.findMany({

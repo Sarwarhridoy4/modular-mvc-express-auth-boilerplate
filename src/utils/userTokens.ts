@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 import { StatusCodes } from "http-status-codes";
-import { generateToken, verifyToken} from "./jwt";
-import { env } from "../config/env";
-import AppError from "../helpers/errorHelper/AppError";
-import { prisma } from "../config/db";
+import { generateToken, verifyToken} from './jwt.js';
+import { env } from '../config/env.js';
+import AppError from '../helpers/errorHelper/AppError.js';
+import { prisma } from '../config/db.js';
 import { UserRole } from "@prisma/client";
-import { AuthJwtPayload } from "../app/modules/auth/auth.interface";
+import { AuthJwtPayload } from '../app/modules/auth/auth.interface.js';
 
 /**
  * 🔐 Generate access + refresh tokens for a user

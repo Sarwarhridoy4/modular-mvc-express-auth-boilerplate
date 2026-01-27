@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { catchAsync } from "../../../utils/catchAsync";
-import { sendResponse } from "../../../utils/sendResponse";
-import authService from "./auth.service";
+import { catchAsync } from '../../../utils/catchAsync.js';
+import { sendResponse } from '../../../utils/sendResponse.js';
+import authService from './auth.service.js';
 import type { CookieOptions, NextFunction, Request, Response } from "express";
-import { setAuthCookie } from "../../../utils/setCookie";
+import { setAuthCookie } from '../../../utils/setCookie.js';
 
 
 const signupUser = catchAsync(async (req: Request, res: Response) => {

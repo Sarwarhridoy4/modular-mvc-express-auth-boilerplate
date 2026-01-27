@@ -1,7 +1,7 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 // adjust path
-import { AuthJwtPayload } from "../app/modules/auth/auth.interface";
-import AppError from "../helpers/errorHelper/AppError";
+import { AuthJwtPayload } from '../app/modules/auth/auth.interface.js';
+import AppError from '../helpers/errorHelper/AppError.js';
 
 
 

@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
-import { env } from "../../config/env";
+import { env } from '../../config/env.js';
 import { JwtPayload } from "jsonwebtoken";
-import { prisma } from "../../config/db";
+import { prisma } from '../../config/db.js';
 import { StatusCodes } from "http-status-codes";
-import AppError from "../../helpers/errorHelper/AppError";
-import { verifyToken } from "../../utils/jwt";
+import AppError from '../../helpers/errorHelper/AppError.js';
+import { verifyToken } from '../../utils/jwt.js';
 
 export const checkAuth =
   (...authRoles: string[]) =>
