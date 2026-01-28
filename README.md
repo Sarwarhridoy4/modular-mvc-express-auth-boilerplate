@@ -370,6 +370,7 @@ Content-Type: application/json
 ```
 
 **Rate Limiting:**
+
 - Maximum 3 OTP requests per 30-minute window
 - 10-minute blocking period after exceeding limit
 - Returns HTTP 429 (Too Many Requests) when rate limit exceeded
@@ -418,6 +419,7 @@ Content-Type: application/json
 ```
 
 **OTP Features:**
+
 - 6-digit random OTP code
 - 5-minute expiration window
 - Automatic email delivery to registered email

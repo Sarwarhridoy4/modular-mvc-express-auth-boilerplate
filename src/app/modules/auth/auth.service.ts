@@ -201,11 +201,11 @@ const requestOTP = async (payload: RequestOTPPayload) => {
   // Check if user is blocked from requesting OTP
   if (isOTPBlocked(user.otpBlockedUntil)) {
     const blockedMinutes = Math.ceil(
-      (user.otpBlockedUntil!.getTime() - new Date().getTime()) / 60000
+      (user.otpBlockedUntil!.getTime() - new Date().getTime()) / 60000,
     );
     throw new AppError(
       StatusCodes.TOO_MANY_REQUESTS,
-      `Too many OTP requests. Please try again in ${blockedMinutes} minute(s)`
+      `Too many OTP requests. Please try again in ${blockedMinutes} minute(s)`,
     );
   }
 
@@ -225,7 +225,7 @@ const requestOTP = async (payload: RequestOTPPayload) => {
 
     throw new AppError(
       StatusCodes.TOO_MANY_REQUESTS,
-      "Too many OTP requests. Please try again after 10 minutes"
+      "Too many OTP requests. Please try again after 10 minutes",
     );
   }
 
@@ -274,7 +274,9 @@ const requestOTP = async (payload: RequestOTPPayload) => {
 /**
  * 🔐 Verify OTP - Verify OTP and login user
  */
-const verifyOTP = async (payload: VerifyOTPPayload): Promise<UserWithTokens> => {
+const verifyOTP = async (
+  payload: VerifyOTPPayload,
+): Promise<UserWithTokens> => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
   });
@@ -287,7 +289,7 @@ const verifyOTP = async (payload: VerifyOTPPayload): Promise<UserWithTokens> => 
   if (isOTPBlocked(user.otpBlockedUntil)) {
     throw new AppError(
       StatusCodes.TOO_MANY_REQUESTS,
-      "Account is temporarily blocked. Please try again later"
+      "Account is temporarily blocked. Please try again later",
     );
   }
 
@@ -295,13 +297,16 @@ const verifyOTP = async (payload: VerifyOTPPayload): Promise<UserWithTokens> => 
   if (!user.otpCode) {
     throw new AppError(
       StatusCodes.BAD_REQUEST,
-      "No OTP found. Please request a new one"
+      "No OTP found. Please request a new one",
     );
   }
 
   // Check if OTP is expired
   if (isOTPExpired(user.otpExpiresAt)) {
-    throw new AppError(StatusCodes.UNAUTHORIZED, "OTP has expired. Request a new one");
+    throw new AppError(
+      StatusCodes.UNAUTHORIZED,
+      "OTP has expired. Request a new one",
+    );
   }
 
   // Verify OTP matches

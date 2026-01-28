@@ -52,7 +52,9 @@ export const getOTPBlockDuration = (): Date => {
  * @param lastAttemptTime - Time of last attempt
  * @returns {boolean} true if window expired, false otherwise
  */
-export const isOTPAttemptWindowExpired = (lastAttemptTime: Date | null): boolean => {
+export const isOTPAttemptWindowExpired = (
+  lastAttemptTime: Date | null,
+): boolean => {
   if (!lastAttemptTime) return true;
   const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
   return lastAttemptTime < thirtyMinutesAgo;

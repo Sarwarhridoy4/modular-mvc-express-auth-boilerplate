@@ -41,4 +41,3 @@ router.post(
 );
 
 export const AuthRoutes = router;
-
