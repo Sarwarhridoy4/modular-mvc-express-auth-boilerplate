@@ -2,8 +2,30 @@
 
 A robust and scalable REST API backend for Point of Sale (POS) and Inventory Management System built with Node.js, Express, TypeScript, Prisma ORM, and PostgreSQL.
 
+## 🆕 Recent Updates
+
+### January 28, 2026 - Two-Factor Authentication with OTP
+
+**New Feature: OTP Verification During Login**
+
+- ✅ Implemented two-step login process with OTP verification
+- ✅ Enhanced security with 5-minute OTP expiration
+- ✅ Rate limiting: 3 OTP requests per 30 minutes
+- ✅ Account blocking for 10 minutes after exceeding rate limit
+- ✅ New API endpoint: `POST /auth/login/verify-otp`
+- ✅ Updated login flow to require OTP verification
+- ✅ Email notifications with OTP codes
+- ✅ Added `loginWithOTPSchema` validation
+
+**What Changed:**
+- `POST /auth/login` now sends OTP instead of returning tokens immediately
+- Added new `POST /auth/login/verify-otp` endpoint for completing login
+- Enhanced security with OTP-based two-factor authentication
+- Updated authentication service, controller, and routes
+
 ## 📋 Table of Contents
 
+- [Recent Updates](#-recent-updates)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
@@ -23,9 +45,11 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - Role-based access control (SUPER_ADMIN, ADMIN, CASHIER)
   - Secure password hashing with bcrypt
   - Cookie-based token management
+  - **Two-factor authentication with OTP during login**
   - Password reset functionality with secure tokens
-  - OTP-based login with rate limiting (3 requests per 30 minutes, 10-minute block)
-  - 10-minute token expiration for security
+  - OTP verification with rate limiting and security features
+  - 10-minute token expiration for password reset
+  - 5-minute OTP expiration for enhanced security
 
 - 👥 **User Management**
   - User registration and login
@@ -96,6 +120,7 @@ POS_Backend/Inventory/
 │   └── utils/           # Utility functions
 │       ├── catchAsync.ts
 │       ├── jwt.ts
+│       ├── otpGenerator.ts    # OTP generation and validation
 │       ├── sendEmail.ts
 │       ├── sendResponse.ts
 │       ├── setCookie.ts
@@ -263,7 +288,9 @@ Content-Type: application/json
 }
 ```
 
-#### Login
+#### Login (Two-Step OTP Verification)
+
+**Step 1: Verify Credentials and Send OTP**
 
 ```http
 POST /api/v1/auth/login
@@ -281,19 +308,51 @@ Content-Type: application/json
 {
   "success": true,
   "statusCode": 200,
+  "message": "OTP sent to your email. Valid for 5 minutes",
+  "data": {
+    "email": "john@example.com",
+    "requiresOTP": true
+  }
+}
+```
+
+**Step 2: Verify OTP and Complete Login**
+
+```http
+POST /api/v1/auth/login/verify-otp
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "otp": "123456"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
   "message": "Login successful",
   "data": {
-    "user": {
-      "id": "uuid",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "role": "CASHIER"
-    },
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "CASHIER",
+    "isActive": true,
+    "createdAt": "2026-01-28T00:00:00.000Z",
     "accessToken": "jwt_token",
     "refreshToken": "jwt_refresh_token"
   }
 }
 ```
+
+**Security Features:**
+- OTP expires after 5 minutes
+- Rate limiting: 3 OTP requests per 30 minutes
+- Account blocked for 10 minutes after exceeding rate limit
+- Invalid OTP returns HTTP 401 (Unauthorized)
 
 #### Logout
 

@@ -17,28 +17,43 @@ const signupUser = catchAsync(async (req: Request, res: Response) => {
 
 const loginWithEmailAndPassword = catchAsync(
   async (req: Request, res: Response) => {
-    const userWithTokens = await authService.loginWithEmailAndPassword(
-      req.body,
-    );
-    const { tokens, ...safeUser } = userWithTokens;
-
-    setAuthCookie(res, {
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    });
-
+    const result = await authService.loginWithEmailAndPassword(req.body);
+    
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
-      message: "Login successful",
+      message: result.message,
       data: {
-        ...safeUser,
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
+        email: result.email,
+        requiresOTP: true,
       },
     });
   },
 );
+
+/**
+ * 🔐 Login with OTP - Complete login after OTP verification
+ */
+const loginWithOTP = catchAsync(async (req: Request, res: Response) => {
+  const userWithTokens = await authService.loginWithOTP(req.body);
+  const { tokens, ...safeUser } = userWithTokens;
+
+  setAuthCookie(res, {
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  });
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Login successful",
+    data: {
+      ...safeUser,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    },
+  });
+});
 
 const logout = catchAsync(
   async (_req: Request, res: Response, _next: NextFunction) => {
@@ -126,6 +141,7 @@ const verifyOTP = catchAsync(async (req: Request, res: Response) => {
 export default {
   signupUser,
   loginWithEmailAndPassword,
+  loginWithOTP,
   logout,
   forgotPassword,
   resetPassword,
