@@ -24,6 +24,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - Secure password hashing with bcrypt
   - Cookie-based token management
   - Password reset functionality with secure tokens
+  - OTP-based login with rate limiting (3 requests per 30 minutes, 10-minute block)
   - 10-minute token expiration for security
 
 - 👥 **User Management**
@@ -346,6 +347,85 @@ Content-Type: application/json
 }
 ```
 
+#### Request OTP (One-Time Password)
+
+```http
+POST /api/v1/auth/request-otp
+Content-Type: application/json
+
+{
+  "email": "john@example.com"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "OTP sent successfully to your email",
+  "data": null
+}
+```
+
+**Rate Limiting:**
+
+- Maximum 3 OTP requests per 30-minute window
+- 10-minute blocking period after exceeding limit
+- Returns HTTP 429 (Too Many Requests) when rate limit exceeded
+
+**Response on Rate Limit:**
+
+```json
+{
+  "success": false,
+  "statusCode": 429,
+  "message": "Too many OTP requests. Please try again after 10 minutes.",
+  "data": null
+}
+```
+
+#### Verify OTP
+
+```http
+POST /api/v1/auth/verify-otp
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "otp": "123456"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "OTP verified successfully",
+  "data": {
+    "user": {
+      "id": "uuid",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "CASHIER"
+    },
+    "accessToken": "jwt_token",
+    "refreshToken": "jwt_refresh_token"
+  }
+}
+```
+
+**OTP Features:**
+
+- 6-digit random OTP code
+- 5-minute expiration window
+- Automatic email delivery to registered email
+- Time-based blocking after 3 requests in 30 minutes
+- Automatic reset after 30-minute window expires
+
 ### User Endpoints
 
 #### Get All Users (Admin Only)
@@ -413,13 +493,15 @@ npm run migrate:deploy
 - ✅ All passwords are hashed using bcrypt
 - ✅ JWT tokens with expiration
 - ✅ Password reset tokens with 10-minute expiration
+- ✅ OTP-based login with 5-minute code expiration
+- ✅ Rate limiting for OTP requests (3 attempts per 30 minutes, 10-minute block)
 - ✅ Secure token generation using crypto.randomBytes
 - ✅ CORS protection enabled
 - ✅ Input validation using Zod schemas
 - ✅ Environment variables for sensitive data
 - ✅ Role-based access control (RBAC)
 - ✅ Global error handling
-- ✅ Email verification for password resets
+- ✅ Email verification for password resets and OTP delivery
 
 ## 🤝 Contributing
 
