@@ -1,15 +1,108 @@
-# Password Reset Feature Documentation
+# Authentication Features Documentation
 
 ## Overview
 
-The password reset feature allows users to securely reset their forgotten passwords through a two-step process:
+The authentication system provides comprehensive security features including:
 
-1. **Forgot Password** - User requests a password reset link
-2. **Reset Password** - User verifies the token and sets a new password
+1. **OTP-Based Login** (Two-Factor Authentication)
+2. **Password Reset** - Secure password recovery
+3. **JWT Authentication** - Token-based session management
+4. **Role-Based Access Control** - User permissions
 
-## API Endpoints
+---
 
-### 1. Forgot Password
+## 1. OTP-Based Login (New - Jan 29, 2026)
+
+### Step 1: Login with Credentials
+
+**POST** `/api/auth/login`
+
+Validates credentials and sends OTP to user's email.
+
+**Request Body:**
+
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "OTP sent to your email. Valid for 5 minutes",
+  "data": {
+    "email": "user@example.com",
+    "requiresOTP": true
+  }
+}
+```
+
+**Error Responses:**
+
+- `404` - User not found
+- `401` - Password is incorrect
+- `429` - Too many OTP requests (rate limit exceeded)
+
+---
+
+### Step 2: Verify OTP
+
+**POST** `/api/auth/login/verify-otp`
+
+Verifies OTP and completes login.
+
+**Request Body:**
+
+```json
+{
+  "email": "user@example.com",
+  "otp": "123456"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Login successful",
+  "data": {
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "user@example.com",
+    "role": "CASHIER",
+    "isActive": true,
+    "createdAt": "2026-01-29T00:00:00.000Z",
+    "accessToken": "jwt_token",
+    "refreshToken": "jwt_refresh_token"
+  }
+}
+```
+
+**Error Responses:**
+
+- `400` - No OTP found, please request a new one
+- `401` - OTP has expired or Invalid OTP
+- `429` - Account temporarily blocked
+
+**Security Features:**
+
+- OTP expires after 5 minutes
+- Maximum 3 OTP requests per 30 minutes
+- Account blocked for 10 minutes after exceeding limit
+- OTP is cleared after successful verification
+
+---
+
+## 2. Password Reset Feature
+
+### Forgot Password
 
 **POST** `/api/auth/forgot-password`
 
@@ -41,7 +134,7 @@ Request the password reset email.
 
 ---
 
-### 2. Reset Password
+### Reset Password
 
 **POST** `/api/auth/reset-password`
 

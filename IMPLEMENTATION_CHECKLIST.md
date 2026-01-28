@@ -1,10 +1,82 @@
-# Password Reset Implementation Checklist
+# Authentication Features Implementation Checklist
 
-## ✅ Completed Items
+## ✅ Completed Items (Updated: January 29, 2026)
 
-### Phase 1: Database Schema
-- [x] Added `passwordResetToken` field to User model
-- [x] Added `passwordResetExpires` field to User model
+### Phase 1: OTP-Based Login System
+- [x] Added OTP fields to User model
+  - [x] `otpCode` field
+  - [x] `otpExpiresAt` field
+  - [x] `otpAttempts` field (default 0)
+  - [x] `otpBlockedUntil` field
+- [x] Created Prisma migration: `20260128081942_add_otp_fields`
+- [x] Applied migration to database
+- [x] Regenerated Prisma client
+
+### Phase 2: OTP Utilities
+- [x] Created `src/utils/otpGenerator.ts`
+  - [x] `generateOTP()` - 6-digit OTP generation
+  - [x] `getOTPExpirationTime()` - 5-minute expiration
+  - [x] `isOTPExpired()` - Expiration check
+  - [x] `isOTPBlocked()` - Block status check
+  - [x] `getOTPBlockDuration()` - 10-minute block
+  - [x] `isOTPAttemptWindowExpired()` - 30-minute window check
+
+### Phase 3: OTP Email Template
+- [x] Created `src/utils/templates/otpEmail.ejs`
+  - [x] Professional HTML template
+  - [x] OTP code display
+  - [x] Security warnings
+  - [x] Expiration notice
+
+### Phase 4: OTP Type Definitions & Validation
+- [x] Created `loginWithOTPSchema` (Zod)
+- [x] Validates email and 6-digit OTP
+- [x] Added to `auth.validation.ts`
+
+### Phase 5: OTP Service Layer
+- [x] Modified `loginWithEmailAndPassword()` service
+  - [x] Validates credentials
+  - [x] Generates 6-digit OTP
+  - [x] Implements rate limiting
+  - [x] Sends OTP email
+  - [x] Returns confirmation message
+  
+- [x] Implemented `loginWithOTP()` service function
+  - [x] Validates OTP exists
+  - [x] Checks OTP not expired
+  - [x] Verifies OTP matches
+  - [x] Clears OTP after verification
+  - [x] Generates JWT tokens
+  - [x] Returns user data with tokens
+
+### Phase 6: OTP Controller Layer
+- [x] Modified `loginWithEmailAndPassword()` controller
+  - [x] Returns OTP sent confirmation
+  - [x] No tokens returned in this step
+  
+- [x] Created `loginWithOTP()` controller endpoint
+  - [x] Validates OTP input
+  - [x] Sets auth cookies
+  - [x] Returns user with tokens
+
+### Phase 7: OTP Routing
+- [x] Modified route: `POST /api/auth/login` - Step 1: Send OTP
+- [x] Added route: `POST /api/auth/login/verify-otp` - Step 2: Verify OTP
+- [x] Added Zod validation middleware
+- [x] Updated `auth.route.ts`
+
+### Phase 8: Enhanced Error Handling
+- [x] Updated `globalErrorHandler.ts`
+  - [x] Added proper Express signature (4 parameters)
+  - [x] Explicit JSON content-type header
+  - [x] Consistent error response structure
+  - [x] Enhanced Zod error formatting
+  - [x] Better error categorization
+
+### Phase 9: Password Reset Feature
+- [x] Added password reset fields to User model
+  - [x] `passwordResetToken` field
+  - [x] `passwordResetExpires` field
 - [x] Created Prisma migration: `20260128075628_add_password_reset_fields`
 - [x] Applied migration to database
 - [x] Regenerated Prisma client

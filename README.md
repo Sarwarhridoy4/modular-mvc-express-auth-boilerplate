@@ -4,6 +4,27 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 
 ## 🆕 Recent Updates
 
+### January 29, 2026 - Enhanced Error Handling
+
+**Improvement: Consistent JSON Error Responses**
+
+- ✅ Fixed global error handler to always return JSON format
+- ✅ Added proper Express error handler signature with 4 parameters
+- ✅ Consistent error response structure across all error types
+- ✅ Explicit `Content-Type: application/json` header for all errors
+- ✅ Enhanced Zod validation error messages
+- ✅ Better error categorization (validation, auth, database, etc.)
+
+**Response Format:**
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "Error description",
+  "errors": [] // Only for validation errors
+}
+```
+
 ### January 28, 2026 - Two-Factor Authentication with OTP
 
 **New Feature: OTP Verification During Login**
@@ -16,6 +37,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 - ✅ Updated login flow to require OTP verification
 - ✅ Email notifications with OTP codes
 - ✅ Added `loginWithOTPSchema` validation
+- ✅ Created OTP email template
 
 **What Changed:**
 - `POST /auth/login` now sends OTP instead of returning tokens immediately
@@ -65,8 +87,10 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 - 🛡️ **Security Features**
   - CORS protection
   - Input validation with Zod
-  - Global error handling
+  - **Consistent JSON error responses**
+  - Global error handling with proper categorization
   - Environment-based configuration
+  - Validation errors with detailed messages
 
 - 🗄️ **Database**
   - PostgreSQL with Prisma ORM

@@ -1,6 +1,28 @@
-# Password Reset Feature - Complete Implementation
+# Authentication Features - Complete Implementation
 
-## 📦 What's New
+## 📦 Recent Updates (January 29, 2026)
+
+### ✅ New: OTP-Based Login System
+
+**Two-Step Login Process:**
+1. **Step 1**: Email + Password → Sends OTP
+2. **Step 2**: Email + OTP → Returns tokens
+
+### ✅ Enhanced Error Handling
+
+**All errors now return JSON format:**
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "Error description",
+  "errors": [] // For validation errors
+}
+```
+
+---
+
+## 📦 Password Reset Feature
 
 ### ✅ Two Complete Functions Implemented
 
@@ -26,20 +48,45 @@ const resetPassword = async (payload: ResetPasswordPayload) => {
 };
 ```
 
-### 📍 Two New API Endpoints
+### 📍 API Endpoints
 
-| Endpoint                    | Method | Purpose                   |
-| --------------------------- | ------ | ------------------------- |
-| `/api/auth/forgot-password` | POST   | Request password reset    |
-| `/api/auth/reset-password`  | POST   | Reset password with token |
+#### Authentication Endpoints
 
-### 🗄️ Database Schema Update
+| Endpoint                         | Method | Purpose                        |
+| -------------------------------- | ------ | ------------------------------ |
+| `/api/auth/login`                | POST   | Step 1: Verify & send OTP      |
+| `/api/auth/login/verify-otp`     | POST   | Step 2: Verify OTP & login     |
+| `/api/auth/signup`               | POST   | Register new user              |
+| `/api/auth/logout`               | POST   | Logout user                    |
+| `/api/auth/forgot-password`      | POST   | Request password reset         |
+| `/api/auth/reset-password`       | POST   | Reset password with token      |
+| `/api/auth/request-otp`          | POST   | Request OTP for other purposes |
+| `/api/auth/verify-otp`           | POST   | Verify OTP (standalone)        |
+
+### 🗄️ Database Schema
 
 ```prisma
 model User {
-  // ... existing fields ...
-  passwordResetToken   String?    // NEW: Unique reset token
-  passwordResetExpires DateTime?  // NEW: Token expiration
+  // Authentication fields
+  id                    String   @id @default(uuid())
+  email                 String   @unique
+  password              String
+  name                  String
+  role                  UserRole @default(CASHIER)
+  isActive              Boolean  @default(true)
+  
+  // Password reset fields
+  passwordResetToken    String?
+  passwordResetExpires  DateTime?
+  
+  // OTP fields
+  otpCode               String?
+  otpExpiresAt          DateTime?
+  otpAttempts           Int      @default(0)
+  otpBlockedUntil       DateTime?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }
 ```
 
@@ -47,15 +94,26 @@ model User {
 
 ## 📋 Files Changed/Created
 
-### Created Files (1)
+### Created Files
 
 ```
 ✅ src/utils/tokenGenerator.ts
    - generateResetToken()
    - getTokenExpirationTime()
+
+✅ src/utils/otpGenerator.ts
+   - generateOTP()
+   - getOTPExpirationTime()
+   - isOTPExpired()
+   - isOTPBlocked()
+   - getOTPBlockDuration()
+   - isOTPAttemptWindowExpired()
+
+✅ src/utils/templates/otpEmail.ejs
+   - Email template for OTP codes
 ```
 
-### Updated Files (6)
+### Updated Files
 
 ```
 ✅ src/app/modules/auth/auth.service.ts
