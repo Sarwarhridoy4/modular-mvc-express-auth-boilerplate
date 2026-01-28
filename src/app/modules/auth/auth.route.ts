@@ -6,6 +6,8 @@ import {
   signupSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  requestOTPSchema,
+  verifyOTPSchema,
 } from "./auth.validation.js";
 
 const router = Router();
@@ -27,5 +29,16 @@ router.post(
   zodValidator(resetPasswordSchema),
   authController.resetPassword,
 );
+router.post(
+  "/request-otp",
+  zodValidator(requestOTPSchema),
+  authController.requestOTP,
+);
+router.post(
+  "/verify-otp",
+  zodValidator(verifyOTPSchema),
+  authController.verifyOTP,
+);
 
 export const AuthRoutes = router;
+

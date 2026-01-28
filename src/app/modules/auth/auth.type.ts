@@ -22,6 +22,15 @@ export type ResetPasswordPayload = {
   confirmPassword: string;
 };
 
+export type RequestOTPPayload = {
+  email: string;
+};
+
+export type VerifyOTPPayload = {
+  email: string;
+  otp: string;
+};
+
 export interface UserWithTokens {
   id: string;
   name: string;

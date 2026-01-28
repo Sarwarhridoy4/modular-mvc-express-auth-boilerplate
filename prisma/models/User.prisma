@@ -13,6 +13,10 @@ model User {
   isActive              Boolean  @default(true)
   passwordResetToken    String?
   passwordResetExpires  DateTime?
+  otpCode               String?
+  otpExpiresAt          DateTime?
+  otpAttempts           Int      @default(0)
+  otpBlockedUntil       DateTime?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   posts                 Post[]

@@ -86,10 +86,49 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * 📱 Request OTP - Send OTP to user email
+ */
+const requestOTP = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.requestOTP(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: result.message,
+    data: null,
+  });
+});
+
+/**
+ * 🔐 Verify OTP - Verify OTP and login user
+ */
+const verifyOTP = catchAsync(async (req: Request, res: Response) => {
+  const userWithTokens = await authService.verifyOTP(req.body);
+  const { tokens, ...safeUser } = userWithTokens;
+
+  setAuthCookie(res, {
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  });
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Login successful with OTP",
+    data: {
+      ...safeUser,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    },
+  });
+});
+
 export default {
   signupUser,
   loginWithEmailAndPassword,
   logout,
   forgotPassword,
   resetPassword,
+  requestOTP,
+  verifyOTP,
 };
