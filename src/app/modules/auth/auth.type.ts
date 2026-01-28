@@ -12,12 +12,22 @@ export type LoginPayload = {
   password: string;
 };
 
+export type ForgotPasswordPayload = {
+  email: string;
+};
+
+export type ResetPasswordPayload = {
+  token: string;
+  password: string;
+  confirmPassword: string;
+};
+
 export interface UserWithTokens {
   id: string;
   name: string;
   email: string;
   role: UserRole;
-isActive: boolean;
+  isActive: boolean;
   createdAt: Date;
   tokens: {
     accessToken: string;

@@ -1,10 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { catchAsync } from '../../../utils/catchAsync.js';
-import { sendResponse } from '../../../utils/sendResponse.js';
-import authService from './auth.service.js';
+import { catchAsync } from "../../../utils/catchAsync.js";
+import { sendResponse } from "../../../utils/sendResponse.js";
+import authService from "./auth.service.js";
 import type { CookieOptions, NextFunction, Request, Response } from "express";
-import { setAuthCookie } from '../../../utils/setCookie.js';
-
+import { setAuthCookie } from "../../../utils/setCookie.js";
 
 const signupUser = catchAsync(async (req: Request, res: Response) => {
   const user = await authService.signupUser(req.body);
@@ -19,7 +18,7 @@ const signupUser = catchAsync(async (req: Request, res: Response) => {
 const loginWithEmailAndPassword = catchAsync(
   async (req: Request, res: Response) => {
     const userWithTokens = await authService.loginWithEmailAndPassword(
-      req.body
+      req.body,
     );
     const { tokens, ...safeUser } = userWithTokens;
 
@@ -38,7 +37,7 @@ const loginWithEmailAndPassword = catchAsync(
         refreshToken: tokens.refreshToken,
       },
     });
-  }
+  },
 );
 
 const logout = catchAsync(
@@ -58,12 +57,39 @@ const logout = catchAsync(
       message: "User Logged Out Successfully",
       data: null,
     });
-  }
+  },
 );
 
+/**
+ * 🔑 Forgot Password - Send reset email
+ */
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.forgotPassword(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: result.message,
+    data: null,
+  });
+});
+
+/**
+ * 🔐 Reset Password - Verify token and update password
+ */
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.resetPassword(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: result.message,
+    data: null,
+  });
+});
 
 export default {
   signupUser,
   loginWithEmailAndPassword,
   logout,
+  forgotPassword,
+  resetPassword,
 };

@@ -23,11 +23,14 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - Role-based access control (SUPER_ADMIN, ADMIN, CASHIER)
   - Secure password hashing with bcrypt
   - Cookie-based token management
+  - Password reset functionality with secure tokens
+  - 10-minute token expiration for security
 
 - 👥 **User Management**
   - User registration and login
   - Role-based user access
   - User profile management
+  - Forgot password and reset password flows
 
 - 📧 **Email Service**
   - Nodemailer integration with SMTP support
@@ -96,6 +99,7 @@ POS_Backend/Inventory/
 │       ├── sendResponse.ts
 │       ├── setCookie.ts
 │       ├── userTokens.ts
+│       ├── tokenGenerator.ts   # Token generation utilities
 │       └── seed.ts
 ├── app.ts               # Express app setup
 ├── server.ts            # Server entry point
@@ -124,11 +128,13 @@ cd POS_Backend/Inventory
 2. **Install dependencies**
 
 Using npm:
+
 ```bash
 npm install
 ```
 
 Using bun:
+
 ```bash
 bun install
 ```
@@ -176,6 +182,7 @@ EMAIL_FROM=noreply@example.com
 ### 📧 Email Setup (Gmail Example)
 
 For Gmail SMTP:
+
 1. Enable 2-factor authentication on your Google account
 2. Generate an App Password: https://myaccount.google.com/apppasswords
 3. Use the App Password in `SMTP_PASSWORD`
@@ -235,6 +242,7 @@ npm start
 ## 📡 API Documentation
 
 ### Base URL
+
 ```
 http://localhost:5000/api/v1
 ```
@@ -242,6 +250,7 @@ http://localhost:5000/api/v1
 ### Authentication Endpoints
 
 #### Sign Up
+
 ```http
 POST /api/v1/auth/signup
 Content-Type: application/json
@@ -254,6 +263,7 @@ Content-Type: application/json
 ```
 
 #### Login
+
 ```http
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -265,6 +275,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -284,13 +295,61 @@ Content-Type: application/json
 ```
 
 #### Logout
+
 ```http
 POST /api/v1/auth/logout
+```
+
+#### Forgot Password
+
+```http
+POST /api/v1/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "john@example.com"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Password reset email sent successfully",
+  "data": null
+}
+```
+
+#### Reset Password
+
+```http
+POST /api/v1/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "reset_token_from_email",
+  "password": "newSecurePassword123",
+  "confirmPassword": "newSecurePassword123"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Password reset successfully",
+  "data": null
+}
 ```
 
 ### User Endpoints
 
 #### Get All Users (Admin Only)
+
 ```http
 GET /api/v1/users
 Authorization: Bearer <access_token>
@@ -304,20 +363,20 @@ Authorization: Bearer <access_token>
 
 ## 📜 Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with hot-reload |
-| `npm run build` | Build TypeScript to JavaScript |
-| `npm start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run lint:fix` | Fix ESLint errors |
-| `npm run migrate:dev` | Run database migrations (development) |
-| `npm run migrate:deploy` | Run database migrations (production) |
-| `npm run generate` | Generate Prisma Client |
-| `npm run reset` | Reset database and migrations |
-| `npm run update` | Push schema changes to database |
-| `npm run studio` | Open Prisma Studio |
-| `npm run seed` | Seed the database |
+| Command                  | Description                              |
+| ------------------------ | ---------------------------------------- |
+| `npm run dev`            | Start development server with hot-reload |
+| `npm run build`          | Build TypeScript to JavaScript           |
+| `npm start`              | Start production server                  |
+| `npm run lint`           | Run ESLint                               |
+| `npm run lint:fix`       | Fix ESLint errors                        |
+| `npm run migrate:dev`    | Run database migrations (development)    |
+| `npm run migrate:deploy` | Run database migrations (production)     |
+| `npm run generate`       | Generate Prisma Client                   |
+| `npm run reset`          | Reset database and migrations            |
+| `npm run update`         | Push schema changes to database          |
+| `npm run studio`         | Open Prisma Studio                       |
+| `npm run seed`           | Seed the database                        |
 
 ## 🚀 Deployment
 
@@ -338,6 +397,7 @@ vercel --prod
 ### Environment Setup
 
 Make sure to set all environment variables in your deployment platform:
+
 - Vercel: Project Settings → Environment Variables
 - Heroku: Config Vars
 - AWS/DigitalOcean: Environment configuration
@@ -352,11 +412,14 @@ npm run migrate:deploy
 
 - ✅ All passwords are hashed using bcrypt
 - ✅ JWT tokens with expiration
+- ✅ Password reset tokens with 10-minute expiration
+- ✅ Secure token generation using crypto.randomBytes
 - ✅ CORS protection enabled
 - ✅ Input validation using Zod schemas
 - ✅ Environment variables for sensitive data
 - ✅ Role-based access control (RBAC)
 - ✅ Global error handling
+- ✅ Email verification for password resets
 
 ## 🤝 Contributing
 
@@ -381,6 +444,17 @@ Built with ❤️ for Inventory Management System
 ## 📞 Support
 
 For support, email support@example.com
+
+---
+
+## 📚 Additional Documentation
+
+For detailed information about the password reset feature, see:
+
+- [Password Reset Feature Guide](./PASSWORD_RESET_FEATURE.md)
+- [Implementation Summary](./IMPLEMENTATION_SUMMARY.md)
+- [Complete Guide](./PASSWORD_RESET_COMPLETE_GUIDE.md)
+- [Quick Reference](./QUICK_REFERENCE.md)
 
 ---
 

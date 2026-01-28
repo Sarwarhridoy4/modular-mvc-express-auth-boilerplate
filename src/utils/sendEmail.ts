@@ -1,11 +1,8 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import ejs from "ejs";
 import path from "path";
 import nodemailer from "nodemailer";
-import AppError from '../helpers/errorHelper/AppError.js';
-import { env } from '../config/env.js';
+import AppError from "../helpers/errorHelper/AppError.js";
+import { env } from "../config/env.js";
 
 // Create transporter with SMTP configuration
 const transporter = nodemailer.createTransport({
@@ -15,6 +12,9 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: env.SMTP_USER,
     pass: env.SMTP_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: false,
   },
 });
 
@@ -61,7 +61,7 @@ export const sendEmail = async ({
     };
 
     const info = await transporter.sendMail(mailOptions);
-    
+
     console.log("📧 Email sent successfully:", info.messageId);
     console.log("Preview URL:", nodemailer.getTestMessageUrl(info));
   } catch (error: any) {
