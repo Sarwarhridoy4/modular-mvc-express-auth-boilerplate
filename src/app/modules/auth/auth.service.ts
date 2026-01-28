@@ -282,6 +282,7 @@ const forgotPassword = async (payload: ForgotPasswordPayload) => {
  */
 const resetPassword = async (payload: ResetPasswordPayload) => {
   const { token, password } = payload;
+  console.log("Resetting password with token:", token);
 
   // Find user with valid reset token
   const user = await prisma.user.findFirst({
@@ -306,13 +307,18 @@ const resetPassword = async (payload: ResetPasswordPayload) => {
     Number(env.BYCRYPT_SALT_ROUNDS),
   );
 
-  // Update password and clear reset token
+  // Update password, clear reset token, and reset OTP attempts
   await prisma.user.update({
     where: { id: user.id },
     data: {
       password: hashedPassword,
       passwordResetToken: null,
       passwordResetExpires: null,
+      // Reset OTP attempts and blocks
+      otpCode: null,
+      otpExpiresAt: null,
+      otpAttempts: 0,
+      otpBlockedUntil: null,
     },
   });
 

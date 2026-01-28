@@ -92,7 +92,15 @@ const forgotPassword = catchAsync(async (req: Request, res: Response) => {
  * 🔐 Reset Password - Verify token and update password
  */
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const result = await authService.resetPassword(req.body);
+  // Get token from query params or body
+  const token = req.query.token as string || req.body.token;
+  const payload = {
+    token,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+  };
+  
+  const result = await authService.resetPassword(payload);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
