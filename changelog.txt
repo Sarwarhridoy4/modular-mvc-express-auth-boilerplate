@@ -15,3 +15,19 @@ This commit introduces a new feature to enforce a maximum of two active login se
 - **`src/app/modules/auth/auth.controller.ts`**:
   - Updated the `sendResponse` in the `loginWithOTP` controller to include the `autoLogoutScheduled` and `autoLogoutMessage` flags.
   - Adjusted the response message dynamically to inform the client if an auto-logout was triggered.
+
+---
+
+fix(lint): Resolve parsing errors and lint warnings; add eslint config
+
+This commit addresses several issues found during project scanning and linting, ensuring code quality and proper configuration.
+
+**Changes include:**
+- **`.eslintrc.json`**: A new ESLint configuration file was created to enable proper linting for the TypeScript project.
+- **`package.json` and `bun.lock`**: Updated due to installing/removing ESLint and TypeScript dependencies to achieve compatibility.
+- **`src/app/modules/auth/auth.service.ts`**:
+  - Fixed a critical parsing error within the `loginWithOTP` function by correcting the placement of `tokens` creation and `return` statements and ensuring proper block closure.
+  - Resolved `@typescript-eslint/no-non-null-assertion` warnings in `loginWithEmailAndPassword` and `requestOTP` by refactoring `if` conditions with explicit null checks.
+  - Resolved `@typescript-eslint/no-unused-vars` warning for `isPasswordValid` in `loginWithEmailAndPassword` by restructuring the conditional logic.
+- **`src/utils/tokenGenerator.ts`**: Resolved `@typescript-eslint/no-inferrable-types` error by removing a redundant type annotation.
+- **`.eslintrc.json`**: Configured `@typescript-eslint/no-unused-vars` to ignore parameters prefixed with `_` to resolve warnings in middleware functions.
