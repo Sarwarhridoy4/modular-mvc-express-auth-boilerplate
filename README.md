@@ -251,6 +251,7 @@ npm start
 ## 📡 API Documentation
 
 For detailed API documentation, please see the [API Documentation Index](./docs/index.md) file.
+- Centralized API documentation now available under the `docs/` directory, providing detailed endpoints for Authentication, User Management, and more.
 
 ## 🚀 Deployment
 
