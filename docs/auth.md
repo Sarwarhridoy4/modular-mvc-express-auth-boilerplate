@@ -29,6 +29,15 @@ Registers a new user in the system.
 }
 ```
 
+##### Request Body Fields
+
+| Field       | Type     | Description                                | Example               |
+| :---------- | :------- | :----------------------------------------- | :-------------------- |
+| `name`      | `string` | The user's full name.                      | `John Doe`            |
+| `email`     | `string` | The user's email address.                  | `john@example.com`    |
+| `password`  | `string` | The user's chosen password.                | `securePassword123`   |
+| `role`      | `string` | Optional. The user's role. Defaults to `CASHIER`. | `CASHIER`             |
+
 #### Success Response (201 Created)
 
 ```json
@@ -47,6 +56,18 @@ Registers a new user in the system.
   }
 }
 ```
+
+##### Data Fields
+
+| Field       | Type      | Description                                     | Example                      |
+| :---------- | :-------- | :---------------------------------------------- | :--------------------------- |
+| `id`        | `string`  | Unique identifier of the newly registered user. | `uuid`                       |
+| `name`      | `string`  | Name of the user.                               | `John Doe`                   |
+| `email`     | `string`  | Email address of the user.                      | `john@example.com`           |
+| `role`      | `string`  | Role of the user.                               | `CASHIER`                    |
+| `isActive`  | `boolean` | Indicates if the user account is active.        | `true`                       |
+| `createdAt` | `string`  | Date and time the user was created (ISO 8601).  | `2026-01-28T00:00:00.000Z`   |
+| `updatedAt` | `string`  | Date and time the user was last updated (ISO 8601).| `2026-01-28T00:00:00.000Z`   |
 
 ---
 
@@ -67,6 +88,13 @@ Initiates the login process, verifying credentials and sending an OTP for two-fa
 }
 ```
 
+##### Request Body Fields
+
+| Field      | Type     | Description                                | Example               |
+| :--------- | :------- | :----------------------------------------- | :-------------------- |
+| `email`    | `string` | The user's email address.                  | `john@example.com`    |
+| `password` | `string` | The user's password.                       | `securePassword123`   |
+
 #### Success Response (200 OK)
 
 ```json
@@ -81,15 +109,14 @@ Initiates the login process, verifying credentials and sending an OTP for two-fa
 }
 ```
 
+##### Data Fields
+
+| Field         | Type      | Description                                       | Example              |
+| :------------ | :-------- | :------------------------------------------------ | :------------------- |
+| `email`       | `string`  | The email address to which the OTP was sent.      | `john@example.com`   |
+| `requiresOTP` | `boolean` | Indicates that OTP verification is required to complete login. | `true`               |
+
 ---
-
-### Verify OTP and Complete Login
-
-Completes the login process after successful OTP verification. Also creates a new user session if the device limit (max 2) is not reached.
-
--   **URL:** `/auth/login/verify-otp`
--   **Method:** `POST`
--   **Content-Type:** `application/json`
 
 #### Request Body
 
@@ -99,6 +126,13 @@ Completes the login process after successful OTP verification. Also creates a ne
   "otp": "123456"
 }
 ```
+
+##### Request Body Fields
+
+| Field   | Type     | Description                                |
+| :------ | :------- | :----------------------------------------- |
+| `email` | `string` | The user's email address.                  |
+| `otp`   | `string` | The One-Time Password received by the user.|
 
 #### Success Response (200 OK)
 
@@ -119,6 +153,19 @@ Completes the login process after successful OTP verification. Also creates a ne
   }
 }
 ```
+
+##### Data Fields
+
+| Field         | Type      | Description                                     | Example                      |
+| :------------ | :-------- | :---------------------------------------------- | :--------------------------- |
+| `id`          | `string`  | Unique identifier of the user.                  | `uuid`                       |
+| `name`        | `string`  | Name of the user.                               | `John Doe`                   |
+| `email`       | `string`  | Email address of the user.                      | `john@example.com`           |
+| `role`        | `string`  | Role of the user.                               | `CASHIER`                    |
+| `isActive`    | `boolean` | Indicates if the user account is active.        | `true`                       |
+| `createdAt`   | `string`  | Date and time the user was created (ISO 8601).  | `2026-01-28T00:00:00.000Z`   |
+| `accessToken` | `string`  | JWT token for authenticating further requests.  | `jwt_token`                  |
+| `refreshToken`| `string`  | JWT refresh token for obtaining new access tokens.| `jwt_refresh_token`          |
 
 #### Error Response (403 Forbidden - Device Limit Exceeded)
 
@@ -157,6 +204,15 @@ Invalidates the current user session and clears authentication cookies.
 }
 ```
 
+##### Response Fields
+
+| Field       | Type      | Description                         | Example                  |
+| :---------- | :-------- | :---------------------------------- | :----------------------- |
+| `success`   | `boolean` | Indicates if the request was successful. | `true`                   |
+| `statusCode`| `number`  | The HTTP status code.               | `200`                    |
+| `message`   | `string`  | A descriptive message about the outcome. | `User Logged Out Successfully` |
+| `data`      | `null`    | No data is returned for this operation. | `null`                   |
+
 ---
 
 ### Forgot Password
@@ -175,6 +231,12 @@ Initiates the password reset process by sending a reset email to the user.
 }
 ```
 
+##### Request Body Fields
+
+| Field   | Type     | Description                        | Example              |
+| :------ | :------- | :--------------------------------- | :------------------- |
+| `email` | `string` | The email address of the user.     | `john@example.com`   |
+
 #### Success Response (200 OK)
 
 ```json
@@ -185,6 +247,15 @@ Initiates the password reset process by sending a reset email to the user.
   "data": null
 }
 ```
+
+##### Response Fields
+
+| Field       | Type      | Description                         | Example                              |
+| :---------- | :-------- | :---------------------------------- | :----------------------------------- |
+| `success`   | `boolean` | Indicates if the request was successful. | `true`                               |
+| `statusCode`| `number`  | The HTTP status code.               | `200`                                |
+| `message`   | `string`  | A descriptive message about the outcome. | `Password reset email sent successfully` |
+| `data`      | `null`    | No data is returned for this operation. | `null`                               |
 
 ---
 
@@ -206,6 +277,14 @@ Resets the user's password using a valid reset token.
 }
 ```
 
+##### Request Body Fields
+
+| Field           | Type     | Description                                | Example               |
+| :-------------- | :------- | :----------------------------------------- | :-------------------- |
+| `token`         | `string` | The reset token received via email.        | `reset_token_from_email`|
+| `password`      | `string` | The new password for the user.             | `newSecurePassword123`|
+| `confirmPassword`| `string` | Confirmation of the new password.          | `newSecurePassword123`|
+
 #### Success Response (200 OK)
 
 ```json
@@ -216,6 +295,15 @@ Resets the user's password using a valid reset token.
   "data": null
 }
 ```
+
+##### Response Fields
+
+| Field       | Type      | Description                         | Example                      |
+| :---------- | :-------- | :---------------------------------- | :--------------------------- |
+| `success`   | `boolean` | Indicates if the request was successful. | `true`                       |
+| `statusCode`| `number`  | The HTTP status code.               | `200`                        |
+| `message`   | `string`  | A descriptive message about the outcome. | `Password reset successfully`|
+| `data`      | `null`    | No data is returned for this operation. | `null`                       |
 
 ---
 
@@ -235,6 +323,12 @@ Requests a new OTP to be sent to the user's email.
 }
 ```
 
+##### Request Body Fields
+
+| Field   | Type     | Description                        | Example              |
+| :------ | :------- | :--------------------------------- | :------------------- |
+| `email` | `string` | The email address of the user.     | `john@example.com`   |
+
 #### Success Response (200 OK)
 
 ```json
@@ -245,6 +339,15 @@ Requests a new OTP to be sent to the user's email.
   "data": null
 }
 ```
+
+##### Response Fields
+
+| Field       | Type      | Description                         | Example                                            |
+| :---------- | :-------- | :---------------------------------- | :------------------------------------------------- |
+| `success`   | `boolean` | Indicates if the request was successful. | `true`                                             |
+| `statusCode`| `number`  | The HTTP status code.               | `200`                                              |
+| `message`   | `string`  | A descriptive message about the outcome. | `OTP sent successfully to your email. Valid for 5 minutes` |
+| `data`      | `null`    | No data is returned for this operation. | `null`                                             |
 
 #### Rate Limiting
 
@@ -263,6 +366,15 @@ Requests a new OTP to be sent to the user's email.
 }
 }
 ```
+
+##### Response Fields
+
+| Field       | Type      | Description                         | Example                                    |
+| :---------- | :-------- | :---------------------------------- | :----------------------------------------- |
+| `success`   | `boolean` | Indicates if the request was successful. | `false`                                    |
+| `statusCode`| `number`  | The HTTP status code.               | `429`                                      |
+| `message`   | `string`  | A descriptive message about the error.  | `Too many OTP requests. Please try again after 10 minutes.` |
+| `data`      | `null`    | No data is returned for this error.     | `null`                                     |
 
 ---
 
@@ -283,8 +395,32 @@ Verifies a provided OTP without initiating a full login flow (useful for other O
 }
 ```
 
+##### Request Body Fields
+
+| Field   | Type     | Description                                | Example              |
+| :------ | :------- | :----------------------------------------- | :------------------- |
+| `email` | `string` | The user's email address.                  | `john@example.com`   |
+| `otp`   | `string` | The One-Time Password to be verified.      | `123456`             |
+
 #### Success Response (200 OK)
 
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "OTP verified successfully",
+  "data": null
+}
+```
+
+##### Response Fields
+
+| Field       | Type      | Description                         | Example                  |
+| :---------- | :-------- | :---------------------------------- | :----------------------- |
+| `success`   | `boolean` | Indicates if the request was successful. | `true`                   |
+| `statusCode`| `number`  | The HTTP status code.               | `200`                    |
+| `message`   | `string`  | A descriptive message about the outcome. | `OTP verified successfully` |
+| `data`      | `null`    | Data is not explicitly defined in the original document. Assuming null for generic success. | `null`                   |
 
 ## API Flowchart
 

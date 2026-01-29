@@ -37,6 +37,18 @@ Retrieves the profile of the currently authenticated user.
 }
 ```
 
+##### Data Fields
+
+| Field     | Type    | Description                                   | Example                      |
+| :-------- | :------ | :-------------------------------------------- | :--------------------------- |
+| `id`      | `string` | Unique identifier of the user.                | `uuid`                       |
+| `name`    | `string` | Name of the user.                             | `John Doe`                   |
+| `email`   | `string` | Email address of the user.                    | `john@example.com`           |
+| `role`    | `string` | Role of the user (e.g., CASHIER).             | `CASHIER`                    |
+| `isActive`| `boolean`| Indicates if the user account is active.      | `true`                       |
+| `createdAt`| `string` | Date and time the user was created (ISO 8601).| `2026-01-28T00:00:00.000Z`   |
+| `updatedAt`| `string` | Date and time the user was last updated (ISO 8601).| `2026-01-28T00:00:00.000Z`   |
+
 ---
 
 ### Update User Profile
@@ -76,6 +88,18 @@ Updates the profile of the currently authenticated user.
   }
 }
 ```
+
+##### Data Fields
+
+| Field     | Type    | Description                                   | Example                      |
+| :-------- | :------ | :-------------------------------------------- | :--------------------------- |
+| `id`      | `string` | Unique identifier of the user.                | `uuid`                       |
+| `name`    | `string` | Name of the user.                             | `John Updated`               |
+| `email`   | `string` | Email address of the user.                    | `john.updated@example.com`   |
+| `role`    | `string` | Role of the user (e.g., CASHIER).             | `CASHIER`                    |
+| `isActive`| `boolean`| Indicates if the user account is active.      | `true`                       |
+| `createdAt`| `string` | Date and time the user was created (ISO 8601).| `2026-01-28T00:00:00.000Z`   |
+| `updatedAt`| `string` | Date and time the user was last updated (ISO 8601).| `2026-01-28T00:00:00.000Z`   |
 
 ---
 
@@ -118,6 +142,18 @@ Retrieves a list of all users in the system. Requires `ADMIN` or `SUPER_ADMIN` r
   ]
 }
 ```
+
+##### Data Fields (Array of User Objects)
+
+| Field     | Type    | Description                                   | Example                      |
+| :-------- | :------ | :-------------------------------------------- | :--------------------------- |
+| `id`      | `string` | Unique identifier of the user.                | `uuid1`                      |
+| `name`    | `string` | Name of the user.                             | `John Doe`                   |
+| `email`   | `string` | Email address of the user.                    | `john@example.com`           |
+| `role`    | `string` | Role of the user (e.g., CASHIER).             | `CASHIER`                    |
+| `isActive`| `boolean`| Indicates if the user account is active.      | `true`                       |
+| `createdAt`| `string` | Date and time the user was created (ISO 8601).| `2026-01-28T00:00:00.000Z`   |
+| `updatedAt`| `string` | Date and time the user was last updated (ISO 8601).| `2026-01-28T00:00:00.000Z`   |
 
 ---
 

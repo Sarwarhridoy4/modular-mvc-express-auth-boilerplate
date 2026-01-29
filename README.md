@@ -13,6 +13,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 - [Database Setup](#database-setup)
 - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
+- [Swagger UI](#swagger-ui)
 - [Deployment](#deployment)
 - [Security Best Practices](#security-best-practices)
 - [Contributing](#contributing)
@@ -266,6 +267,14 @@ npm start
 
 For detailed API documentation, please see the [API Documentation Index](./docs/index.md) file.
 - Centralized API documentation now available under the `docs/` directory, providing detailed endpoints for Authentication, User Management, and more.
+
+## 📄 Swagger UI
+
+This project includes Swagger UI for interactive API documentation. You can access it when the application is running.
+
+- **URL:** `http://localhost:5000/api/v1/api-docs`
+
+---
 
 ## 🚀 Deployment
 
