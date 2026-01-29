@@ -69,17 +69,13 @@ const loginWithEmailAndPassword = async (
   });
   if (!user) throw new AppError(StatusCodes.NOT_FOUND, "User not found");
 
-  const isPasswordValid = await bcryptjs.compare(
-    payload.password,
-    user.password,
-  );
-  if (!isPasswordValid)
+  if (!(await bcryptjs.compare(payload.password, user.password))) {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Password is incorrect!");
-
+  }
   // Check if user is blocked from requesting OTP
-  if (isOTPBlocked(user.otpBlockedUntil)) {
+  if (user.otpBlockedUntil && isOTPBlocked(user.otpBlockedUntil)) {
     const blockedMinutes = Math.ceil(
-      (user.otpBlockedUntil!.getTime() - new Date().getTime()) / 60000,
+      (user.otpBlockedUntil.getTime() - new Date().getTime()) / 60000,
     );
     throw new AppError(
       StatusCodes.TOO_MANY_REQUESTS,
@@ -220,6 +216,10 @@ const loginWithOTP = async (
       where: { id: oldestSession.id },
     });
 
+    autoLogoutScheduled = true;
+    autoLogoutMessage = "An older session was automatically logged out. This session will be logged out in 10 seconds due to device limit.";
+  }
+
   const tokens = await createUserTokens({
     id: user.id,
     email: user.email,
@@ -358,9 +358,9 @@ const requestOTP = async (payload: RequestOTPPayload) => {
   }
 
   // Check if user is blocked from requesting OTP
-  if (isOTPBlocked(user.otpBlockedUntil)) {
+  if (user.otpBlockedUntil && isOTPBlocked(user.otpBlockedUntil)) {
     const blockedMinutes = Math.ceil(
-      (user.otpBlockedUntil!.getTime() - new Date().getTime()) / 60000,
+      (user.otpBlockedUntil.getTime() - new Date().getTime()) / 60000,
     );
     throw new AppError(
       StatusCodes.TOO_MANY_REQUESTS,

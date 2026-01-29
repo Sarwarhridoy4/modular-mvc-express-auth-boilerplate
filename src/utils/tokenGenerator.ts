@@ -44,6 +44,6 @@ export const generateResetToken = (): string => {
  * const expiryCustom = getTokenExpirationTime(30);
  * console.log('Custom Expiration (30 min):', expiryCustom); // e.g., 2026-01-29T11:20:00.000Z
  */
-export const getTokenExpirationTime = (minutes: number = 10): Date => {
+export const getTokenExpirationTime = (minutes = 10): Date => {
   return new Date(Date.now() + minutes * 60 * 1000);
 };
