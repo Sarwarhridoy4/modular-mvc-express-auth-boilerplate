@@ -4,4 +4,5 @@ export interface AuthJwtPayload extends JwtPayload {
   userId: string;
   email: string;
   role: string;
+  sessionId?: string;
 }

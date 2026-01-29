@@ -10,15 +10,25 @@ import { AuthJwtPayload } from '../app/modules/auth/auth.interface.js';
 /**
  * 🔐 Generate access + refresh tokens for a user
  */
-export const createUserTokens = (user: {
+export const createUserTokens = async (user: {
   id: string;
   email: string;
   role: UserRole;
-}) => {
+}, userAgent?: string, ipAddress?: string) => {
+  // Create UserSession
+  const session = await prisma.userSession.create({
+    data: {
+      userId: user.id,
+      userAgent: userAgent,
+      ipAddress: ipAddress,
+    },
+  });
+
   const jwtPayload: AuthJwtPayload = {
     userId: user.id,
     email: user.email,
     role: user.role,
+    sessionId: session.id, // Include sessionId in JWT payload
   };
 
   // Access token (short lifespan)
@@ -63,11 +73,23 @@ export const createNewAccessTokenWithRefreshToken = async (
     if (!user)
       throw new AppError(StatusCodes.NOT_FOUND, "User no longer exists");
 
+    // Check if session still exists
+    if (!decoded.sessionId) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid session");
+    }
+    const session = await prisma.userSession.findUnique({
+      where: { id: decoded.sessionId },
+    });
+    if (!session) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, "Session expired or invalid");
+    }
+
     const newAccessToken = generateToken(
       {
         userId: user.id,
         email: user.email,
         role: user.role,
+        sessionId: decoded.sessionId, // Keep session ID in new access token
       },
       env.JWT_SECRET_KEY,
       env.JWT_EXPIRES_IN

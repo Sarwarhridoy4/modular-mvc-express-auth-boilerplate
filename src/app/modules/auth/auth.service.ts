@@ -158,6 +158,9 @@ const loginWithOTP = async (
 ): Promise<UserWithTokens> => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
+    include: {
+      sessions: true, // Include sessions to check count
+    },
   });
 
   if (!user) {
@@ -204,11 +207,19 @@ const loginWithOTP = async (
     },
   });
 
-  const tokens = createUserTokens({
+  // Check active sessions
+  if (user.sessions.length >= 2) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      "You have reached the maximum number of active devices (2). Please log out from another device.",
+    );
+  }
+
+  const tokens = await createUserTokens({
     id: user.id,
     email: user.email,
     role: user.role,
-  });
+  }, payload.userAgent, payload.ipAddress);
 
   return {
     id: user.id,
@@ -420,6 +431,9 @@ const verifyOTP = async (
 ): Promise<UserWithTokens> => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
+    include: {
+      sessions: true, // Include sessions to check count
+    },
   });
 
   if (!user) {
@@ -466,11 +480,19 @@ const verifyOTP = async (
     },
   });
 
-  const tokens = createUserTokens({
+  // Check active sessions
+  if (user.sessions.length >= 2) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      "You have reached the maximum number of active devices (2). Please log out from another device.",
+    );
+  }
+
+  const tokens = await createUserTokens({
     id: user.id,
     email: user.email,
     role: user.role,
-  });
+  }, payload.userAgent, payload.ipAddress);
 
   return {
     id: user.id,
@@ -483,6 +505,17 @@ const verifyOTP = async (
   };
 };
 
+/**
+ * 🔒 Logout User - Delete user session
+ */
+const logoutUser = async (sessionId: string) => {
+  await prisma.userSession.delete({
+    where: {
+      id: sessionId,
+    },
+  });
+};
+
 export default {
   signupUser,
   loginWithEmailAndPassword,
@@ -491,4 +524,5 @@ export default {
   resetPassword,
   requestOTP,
   verifyOTP,
+  logoutUser,
 };

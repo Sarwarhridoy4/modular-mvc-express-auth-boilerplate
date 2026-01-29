@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
 import { env } from '../../config/env.js';
-import { JwtPayload } from "jsonwebtoken";
 import { prisma } from '../../config/db.js';
 import { StatusCodes } from "http-status-codes";
 import AppError from '../../helpers/errorHelper/AppError.js';
 import { verifyToken } from '../../utils/jwt.js';
+import { AuthJwtPayload } from '../modules/auth/auth.interface.js'; // Import AuthJwtPayload
 
 export const checkAuth =
   (...authRoles: string[]) =>
@@ -20,7 +20,7 @@ export const checkAuth =
       const verifiedToken = verifyToken(
         accessToken,
         env.JWT_SECRET_KEY
-      ) as JwtPayload & { role: string; email: string };
+      ) as AuthJwtPayload; // Use AuthJwtPayload
       if (!verifiedToken) {
         throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid token");
       }
@@ -43,6 +43,7 @@ export const checkAuth =
         email: user.email,
         role: user.role,
         name: user.name,
+        sessionId: verifiedToken.sessionId, // Attach sessionId
       };
 
       next();
