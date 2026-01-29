@@ -292,6 +292,10 @@ npm install -g vercel
 vercel --prod
 ```
 
+### Live Demo
+
+You can access the live demo of the application here: [POS Inventory Backend](https://pos-inventory-backend-sable.vercel.app)
+
 ### Environment Setup
 
 Make sure to set all environment variables in your deployment platform:
