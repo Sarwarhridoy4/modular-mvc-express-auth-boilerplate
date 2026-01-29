@@ -134,9 +134,9 @@ This section describes the different user roles available in the system and thei
 ```mermaid
 graph TD
     subgraph User Endpoints
-        getUsers[/GET /users\] --> checkAuth[checkAuth(UserRole.ADMIN)]
-        checkAuth --> getAllUsers[userController.getAllUsers]
+        getUsers["/GET /users"] --> checkAuth["checkAuth(UserRole.ADMIN)"]
+        checkAuth --> getAllUsers["userController.getAllUsers"]
     end
 
-    getAllUsers --> success[Success]
+    getAllUsers --> success["Success"]
 ```
