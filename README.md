@@ -250,7 +250,7 @@ npm start
 
 ## 📡 API Documentation
 
-For detailed API documentation, please see the [API.md](./API.md) file.
+For detailed API documentation, please see the [API Documentation Index](./docs/index.md) file.
 
 ## 🚀 Deployment
 
