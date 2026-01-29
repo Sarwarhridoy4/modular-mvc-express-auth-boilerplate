@@ -285,22 +285,28 @@ Verifies a provided OTP without initiating a full login flow (useful for other O
 
 #### Success Response (200 OK)
 
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "message": "OTP verified successfully",
-  "data": {
-    "user": {
-      "id": "uuid",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "role": "CASHIER",
-      "isActive": true,
-      "createdAt": "2026-01-28T00:00:00.000Z"
-    },
-    "accessToken": "jwt_token",
-    "refreshToken": "jwt_refresh_token"
-  }
-}
+
+## API Flowchart
+
+```mermaid
+graph TD
+    subgraph Authentication Endpoints
+        signup[/POST /auth/signup\] --> signupCtrl[authController.signupUser]
+        login[/POST /auth/login\] --> loginCtrl[authController.loginWithEmailAndPassword]
+        verifyOtp[/POST /auth/login/verify-otp\] --> verifyOtpCtrl[authController.loginWithOTP]
+        logout[/POST /auth/logout\] --> logoutCtrl[authController.logout]
+        forgotPassword[/POST /auth/forgot-password\] --> forgotPasswordCtrl[authController.forgotPassword]
+        resetPassword[/POST /auth/reset-password\] --> resetPasswordCtrl[authController.resetPassword]
+        requestOtp[/POST /auth/request-otp\] --> requestOtpCtrl[authController.requestOTP]
+        generalVerifyOtp[/POST /auth/verify-otp\] --> generalVerifyOtpCtrl[authController.verifyOTP]
+    end
+
+    signupCtrl --> success[Success]
+    loginCtrl --> otpSent[OTP Sent]
+    verifyOtpCtrl --> loginSuccess[Login Success]
+    logoutCtrl --> logoutSuccess[Logout Success]
+    forgotPasswordCtrl --> emailSent[Email Sent]
+    resetPasswordCtrl --> passwordReset[Password Reset]
+    requestOtpCtrl --> otpSentAgain[OTP Sent]
+    generalVerifyOtpCtrl --> otpVerified[OTP Verified]
 ```
