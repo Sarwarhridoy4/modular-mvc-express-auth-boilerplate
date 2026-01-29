@@ -4,19 +4,19 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 
 ## 📋 Table of Contents
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Environment Variables](#environment-variables)
-- [Database Setup](#database-setup)
-- [Running the Application](#running-the-application)
-- [API Documentation](#api-documentation)
-- [Deployment](#deployment)
-- [Security Best Practices](#security-best-practices)
-- [Contributing](#contributing)
-- [License](#license)
+- [Features](#user-content-features)
+- [Tech Stack](#user-content-tech-stack)
+- [Project Structure](#user-content-project-structure)
+- [Prerequisites](#user-content-prerequisites)
+- [Installation](#user-content-installation)
+- [Environment Variables](#user-content-environment-variables)
+- [Database Setup](#user-content-database-setup)
+- [Running the Application](#user-content-running-the-application)
+- [API Documentation](#user-content-api-documentation)
+- [Deployment](#user-content-deployment)
+- [Security Best Practices](#user-content-security-best-practices)
+- [Contributing](#user-content-contributing)
+- [License](#user-content-license)
 
 ## ✨ Features
 
