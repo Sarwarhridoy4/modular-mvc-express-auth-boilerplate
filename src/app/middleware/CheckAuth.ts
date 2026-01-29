@@ -7,6 +7,46 @@ import AppError from '../../helpers/errorHelper/AppError.js';
 import { verifyToken } from '../../utils/jwt.js';
 import { AuthJwtPayload } from '../modules/auth/auth.interface.js'; // Import AuthJwtPayload
 
+/**
+ * Middleware to check user authentication and authorization based on roles.
+ *
+ * This middleware verifies the presence and validity of an access token
+ * from cookies. If the token is valid, it decodes the user information
+ * (email, role, sessionId) and retrieves the user from the database.
+ * It then checks if the user's role matches any of the allowed roles
+ * specified in `authRoles`. If authentication or authorization fails,
+ * it throws an `AppError` with an appropriate status code and message.
+ * On success, it attaches user details (id, email, role, name, sessionId)
+ * to `req.user` for subsequent middleware/handlers.
+ *
+ * @param {...string} authRoles - A variable number of strings representing allowed user roles (e.g., 'ADMIN', 'USER').
+ * @returns {(req: Request, res: Response, next: NextFunction) => Promise<void>} An Express middleware function.
+ *
+ * @example
+ * // Example: Protecting a route for administrators only
+ * import { checkAuth } from '../../middleware/CheckAuth.js';
+ * import { UserRole } from '@prisma/client';
+ *
+ * // In your route definition:
+ * router.get('/admin/dashboard', checkAuth(UserRole.ADMIN), adminController.getDashboard);
+ *
+ * @example
+ * // Example: Protecting a route for both users and administrators
+ * import { checkAuth } from '../../middleware/CheckAuth.js';
+ * import { UserRole } from '@prisma/client';
+ *
+ * // In your route definition:
+ * router.get('/profile', checkAuth(UserRole.USER, UserRole.ADMIN), userController.getUserProfile);
+ *
+ * @example
+ * // Example: How req.user is populated after successful authentication
+ * // Assuming a route like: router.get('/my-data', checkAuth(UserRole.USER), (req, res) => { ... });
+ * // Inside the handler:
+ * const userId = req.user.id;
+ * const userEmail = req.user.email;
+ * const userRole = req.user.role;
+ * console.log(`Authenticated user: ${userEmail} with role ${userRole}`);
+ */
 export const checkAuth =
   (...authRoles: string[]) =>
   async (req: Request, _res: Response, next: NextFunction) => {

@@ -30,6 +30,57 @@ interface SendEmailOptions {
   }[];
 }
 
+/**
+ * Sends an email using a predefined EJS template.
+ *
+ * This utility configures a Nodemailer transporter using SMTP settings
+ * from environment variables. It renders an EJS template with provided data
+ * and sends an email to the specified recipient.
+ *
+ * @param {SendEmailOptions} options - An object containing email sending options.
+ * @param {string} options.to - The recipient's email address.
+ * @param {string} options.subject - The subject line of the email.
+ * @param {string} options.templateName - The name of the EJS template (without .ejs extension) located in `src/utils/templates`.
+ * @param {Record<string, any>} [options.templateData] - Data to pass to the EJS template for rendering.
+ * @param {Array<Object>} [options.attachments] - An array of attachment objects. Each object should have `filename`, `content`, and `contentType`.
+ * @throws {AppError} If email sending fails or service is unavailable.
+ *
+ * @example
+ * // To send a welcome email:
+ * import { sendEmail } from './sendEmail.js';
+ *
+ * async function sendWelcomeEmail(userEmail: string, userName: string) {
+ *   try {
+ *     await sendEmail({
+ *       to: userEmail,
+ *       subject: 'Welcome to Our Service!',
+ *       templateName: 'welcome', // Assumes src/utils/templates/welcome.ejs exists
+ *       templateData: { name: userName, appName: 'POS Inventory' },
+ *     });
+ *     console.log('Welcome email sent successfully.');
+ *   } catch (error) {
+ *     console.error('Failed to send welcome email:', error);
+ *   }
+ * }
+ *
+ * @example
+ * // To send a password reset email with a token:
+ * import { sendEmail } from './sendEmail.js';
+ *
+ * async function sendPasswordResetEmail(userEmail: string, resetLink: string) {
+ *   try {
+ *     await sendEmail({
+ *       to: userEmail,
+ *       subject: 'Password Reset Request',
+ *       templateName: 'forgetPassword', // Assumes src/utils/templates/forgetPassword.ejs exists
+ *       templateData: { resetLink: resetLink },
+ *     });
+ *     console.log('Password reset email sent successfully.');
+ *   } catch (error) {
+ *     console.error('Failed to send password reset email:', error);
+ *   }
+ * }
+ */
 export const sendEmail = async ({
   to,
   subject,
