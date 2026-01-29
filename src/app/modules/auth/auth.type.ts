@@ -45,4 +45,6 @@ export interface UserWithTokens {
     refreshToken: string;
     expiresIn: string; // Add expiresIn
   };
+  autoLogoutScheduled?: boolean;
+  autoLogoutMessage?: string;
 }

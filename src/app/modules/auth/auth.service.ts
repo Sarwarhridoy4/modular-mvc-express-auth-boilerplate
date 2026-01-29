@@ -207,13 +207,18 @@ const loginWithOTP = async (
     },
   });
 
-  // Check active sessions
+  let autoLogoutScheduled = false;
+  let autoLogoutMessage: string | undefined = undefined;
+
+  // Check active sessions and enforce limit
   if (user.sessions.length >= 2) {
-    throw new AppError(
-      StatusCodes.FORBIDDEN,
-      "You have reached the maximum number of active devices (2). Please log out from another device.",
-    );
-  }
+    // Sort sessions by createdAt to find the oldest
+    const oldestSession = user.sessions.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
+
+    // Delete the oldest session
+    await prisma.userSession.delete({
+      where: { id: oldestSession.id },
+    });
 
   const tokens = await createUserTokens({
     id: user.id,
@@ -229,6 +234,8 @@ const loginWithOTP = async (
     isActive: user.isActive,
     createdAt: user.createdAt,
     tokens,
+    autoLogoutScheduled,
+    autoLogoutMessage,
   };
 };
 

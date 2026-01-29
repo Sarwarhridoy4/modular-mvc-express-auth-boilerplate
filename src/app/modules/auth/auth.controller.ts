@@ -46,14 +46,21 @@ const loginWithOTP = catchAsync(async (req: Request, res: Response) => {
     refreshToken: tokens.refreshToken,
   });
 
+  let message = "Login successful";
+  if (userWithTokens.autoLogoutScheduled) {
+    message = userWithTokens.autoLogoutMessage || "Login successful, but an older session was terminated.";
+  }
+
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: "Login successful",
+    message: message,
     data: {
       ...safeUser,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
+      autoLogoutScheduled: userWithTokens.autoLogoutScheduled,
+      autoLogoutMessage: userWithTokens.autoLogoutMessage,
     },
   });
 });
