@@ -30,6 +30,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - OTP verification with rate limiting and security features
   - 10-minute token expiration for password reset
   - 5-minute OTP expiration for enhanced security
+  - Max two active login sessions per user
 
 - 👥 **User Management**
   - User registration and login
