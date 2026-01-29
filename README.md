@@ -272,7 +272,7 @@ For detailed API documentation, please see the [API Documentation Index](./docs/
 
 This project includes Swagger UI for interactive API documentation. You can access it when the application is running.
 
-- **URL:** `http://localhost:5000/api/v1/api-docs`
+- **URL:** `http://localhost:5000/api-docs/`
 
 ---
 
