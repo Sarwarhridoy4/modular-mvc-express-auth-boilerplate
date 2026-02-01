@@ -57,6 +57,9 @@ Registers a new user in the system.
 }
 ```
 
+**Note**: A welcome email is automatically sent to the user upon successful registration. The registration process succeeds even if the email delivery fails
+```
+
 ##### Data Fields
 
 | Field       | Type      | Description                                     | Example                      |
@@ -349,10 +352,17 @@ Requests a new OTP to be sent to the user's email.
 | `message`   | `string`  | A descriptive message about the outcome. | `OTP sent successfully to your email. Valid for 5 minutes` |
 | `data`      | `null`    | No data is returned for this operation. | `null`                                             |
 
-#### Rate Limiting
+#### Rate Limiting & Security
 
-- Maximum 3 OTP requests per 30-minute window
-- 10-minute blocking period after exceeding limit
+- **30-minute sliding window**: OTP attempt tracking uses a rolling 30-minute window starting from the first OTP request
+- **Maximum 3 OTP requests**: Users can request up to 3 OTPs within the 30-minute window
+- **Automatic window reset**: After 30 minutes of inactivity, the attempt counter automatically resets
+- **10-minute blocking**: Account is blocked for 10 minutes after exceeding the 3-attempt limit
+- **Attempt tracking fields**:
+  - `otpAttempts`: Tracks number of OTP requests within the current window
+  - `otpAttemptWindowStart`: Timestamp marking the start of the current 30-minute window
+  - `otpBlockedUntil`: Timestamp indicating when the account block expires
+- **Security reset**: All OTP-related fields are cleared after successful password reset
 - Returns HTTP 429 (Too Many Requests) when rate limit exceeded
 
 #### Error Response (429 Too Many Requests)

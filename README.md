@@ -29,9 +29,12 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - **Two-factor authentication with OTP during login**
   - Password reset functionality with secure tokens
   - OTP verification with rate limiting and security features
+  - **Advanced OTP attempt tracking with 30-minute sliding window**
+  - **Automatic 10-minute account blocking after 3 OTP requests in 30 minutes**
   - 10-minute token expiration for password reset
   - 5-minute OTP expiration for enhanced security
-  - Max two active login sessions per user
+  - Max two active login sessions per user with automatic session management
+  - **Welcome email sent upon successful registration**
 
 - 👥 **User Management**
   - User registration and login
@@ -316,7 +319,11 @@ npm run migrate:deploy
 - ✅ JWT tokens with expiration
 - ✅ Password reset tokens with 10-minute expiration
 - ✅ OTP-based login with 5-minute code expiration
-- ✅ Rate limiting for OTP requests (3 attempts per 30 minutes, 10-minute block)
+- ✅ Advanced rate limiting for OTP requests:
+  - 30-minute sliding window for attempt tracking
+  - Maximum 3 OTP requests per 30-minute window
+  - Automatic 10-minute account blocking after exceeding limit
+  - Window resets automatically after expiration
 - ✅ Secure token generation using crypto.randomBytes
 - ✅ CORS protection enabled
 - ✅ Input validation using Zod schemas
@@ -324,6 +331,7 @@ npm run migrate:deploy
 - ✅ Role-based access control (RBAC)
 - ✅ Global error handling
 - ✅ Email verification for password resets and OTP delivery
+- ✅ Automatic session management (max 2 concurrent devices)
 
 ## 🤝 Contributing
 

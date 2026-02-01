@@ -58,6 +58,35 @@ const signupUser = async (payload: SignupPayload) => {
     },
   });
 
+  // Send welcome email
+  try {
+    const loginUrl = `${env.FRONTEND_URL}/auth/login`;
+    const registrationDate = new Date(user.createdAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    await sendEmail({
+      to: user.email,
+      subject: "Welcome to POS Inventory System! 🎉",
+      templateName: "welcomeEmail",
+      templateData: {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        registrationDate,
+        loginUrl,
+      },
+    });
+  } catch (error) {
+    // Log the error but don't fail the registration
+    console.error("Failed to send welcome email:", error);
+    // User is still created successfully even if email fails
+  }
+
   return user;
 };
 
@@ -72,7 +101,8 @@ const loginWithEmailAndPassword = async (
   if (!(await bcryptjs.compare(payload.password, user.password))) {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Password is incorrect!");
   }
-  // Check if user is blocked from requesting OTP
+
+  // Check if user is currently blocked from requesting OTP
   if (user.otpBlockedUntil && isOTPBlocked(user.otpBlockedUntil)) {
     const blockedMinutes = Math.ceil(
       (user.otpBlockedUntil.getTime() - new Date().getTime()) / 60000,
@@ -83,9 +113,12 @@ const loginWithEmailAndPassword = async (
     );
   }
 
-  // Reset attempt counter if 30-minute window expired
+  // Check if the 30-minute attempt window has expired
   let otpAttempts = user.otpAttempts || 0;
-  if (isOTPAttemptWindowExpired(user.otpBlockedUntil)) {
+  const windowExpired = isOTPAttemptWindowExpired(user.otpAttemptWindowStart);
+
+  if (windowExpired) {
+    // Reset attempts and start new window
     otpAttempts = 0;
   }
 
@@ -94,7 +127,10 @@ const loginWithEmailAndPassword = async (
     const blockUntil = getOTPBlockDuration();
     await prisma.user.update({
       where: { id: user.id },
-      data: { otpBlockedUntil: blockUntil },
+      data: {
+        otpBlockedUntil: blockUntil,
+        otpAttempts: otpAttempts + 1, // Still increment for logging
+      },
     });
 
     throw new AppError(
@@ -106,14 +142,19 @@ const loginWithEmailAndPassword = async (
   // Generate new OTP
   const otp = generateOTP();
   const otpExpires = getOTPExpirationTime();
+  const now = new Date();
 
-  // Save OTP to database
+  // Save OTP to database with updated attempt tracking
   await prisma.user.update({
     where: { id: user.id },
     data: {
       otpCode: otp,
       otpExpiresAt: otpExpires,
       otpAttempts: otpAttempts + 1,
+      // Set window start time if this is the first attempt in the window
+      otpAttemptWindowStart: windowExpired || !user.otpAttemptWindowStart ? now : user.otpAttemptWindowStart,
+      // Clear block if it was set
+      otpBlockedUntil: null,
     },
   });
 
@@ -200,6 +241,7 @@ const loginWithOTP = async (
       otpExpiresAt: null,
       otpAttempts: 0,
       otpBlockedUntil: null,
+      otpAttemptWindowStart: null,
     },
   });
 
@@ -337,6 +379,7 @@ const resetPassword = async (payload: ResetPasswordPayload) => {
       otpExpiresAt: null,
       otpAttempts: 0,
       otpBlockedUntil: null,
+      otpAttemptWindowStart: null,
     },
   });
 
@@ -357,7 +400,7 @@ const requestOTP = async (payload: RequestOTPPayload) => {
     throw new AppError(StatusCodes.NOT_FOUND, "User not found with this email");
   }
 
-  // Check if user is blocked from requesting OTP
+  // Check if user is currently blocked from requesting OTP
   if (user.otpBlockedUntil && isOTPBlocked(user.otpBlockedUntil)) {
     const blockedMinutes = Math.ceil(
       (user.otpBlockedUntil.getTime() - new Date().getTime()) / 60000,
@@ -368,9 +411,12 @@ const requestOTP = async (payload: RequestOTPPayload) => {
     );
   }
 
-  // Reset attempt counter if 30-minute window expired
+  // Check if the 30-minute attempt window has expired
   let otpAttempts = user.otpAttempts || 0;
-  if (isOTPAttemptWindowExpired(user.otpBlockedUntil)) {
+  const windowExpired = isOTPAttemptWindowExpired(user.otpAttemptWindowStart);
+
+  if (windowExpired) {
+    // Reset attempts and start new window
     otpAttempts = 0;
   }
 
@@ -379,7 +425,10 @@ const requestOTP = async (payload: RequestOTPPayload) => {
     const blockUntil = getOTPBlockDuration();
     await prisma.user.update({
       where: { id: user.id },
-      data: { otpBlockedUntil: blockUntil },
+      data: {
+        otpBlockedUntil: blockUntil,
+        otpAttempts: otpAttempts + 1, // Still increment for logging
+      },
     });
 
     throw new AppError(
@@ -391,14 +440,19 @@ const requestOTP = async (payload: RequestOTPPayload) => {
   // Generate new OTP
   const otp = generateOTP();
   const otpExpires = getOTPExpirationTime();
+  const now = new Date();
 
-  // Save OTP to database
+  // Save OTP to database with updated attempt tracking
   await prisma.user.update({
     where: { id: user.id },
     data: {
       otpCode: otp,
       otpExpiresAt: otpExpires,
       otpAttempts: otpAttempts + 1,
+      // Set window start time if this is the first attempt in the window
+      otpAttemptWindowStart: windowExpired || !user.otpAttemptWindowStart ? now : user.otpAttemptWindowStart,
+      // Clear block if it was set
+      otpBlockedUntil: null,
     },
   });
 
@@ -484,6 +538,7 @@ const verifyOTP = async (
       otpExpiresAt: null,
       otpAttempts: 0,
       otpBlockedUntil: null,
+      otpAttemptWindowStart: null,
     },
   });
 
