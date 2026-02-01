@@ -6,13 +6,14 @@ import type{ Request, Response } from "express";
 
 
 
-const getAllUsers = catchAsync(async (_req: Request, res: Response) => {
-  const users = await userService.getAllUsers();
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const { meta, data } = await userService.getAllUsers(req.query as Record<string, string>);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: "Users fetched successfully",
-    data: users,
+    meta: meta,
+    data: data,
   });
 });
 
