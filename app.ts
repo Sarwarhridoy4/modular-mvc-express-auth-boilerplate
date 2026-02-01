@@ -9,6 +9,10 @@ import { env } from "./src/config/env.js";
 import notFound from "./src/app/middleware/notFound.js";
 import { globalErrorHandler } from "./src/app/middleware/globalErrorHandler.js";
 
+// Swagger imports
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './src/config/swagger.config.js'; // Adjust path if necessary
+
 const app: Application = express();
 
 // Middleware
@@ -24,6 +28,9 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/v1", router);
+
+// Swagger UI Route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Default route for testing
 app.get("/", (_req: Request, res: Response) => {

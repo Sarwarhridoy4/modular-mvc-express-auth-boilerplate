@@ -4,19 +4,20 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 
 ## 📋 Table of Contents
 
-- [Features](#user-content-features)
-- [Tech Stack](#user-content-tech-stack)
-- [Project Structure](#user-content-project-structure)
-- [Prerequisites](#user-content-prerequisites)
-- [Installation](#user-content-installation)
-- [Environment Variables](#user-content-environment-variables)
-- [Database Setup](#user-content-database-setup)
-- [Running the Application](#user-content-running-the-application)
-- [API Documentation](#user-content-api-documentation)
-- [Deployment](#user-content-deployment)
-- [Security Best Practices](#user-content-security-best-practices)
-- [Contributing](#user-content-contributing)
-- [License](#user-content-license)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [Database Setup](#database-setup)
+- [Running the Application](#running-the-application)
+- [API Documentation](#api-documentation)
+- [Swagger UI](#swagger-ui)
+- [Deployment](#deployment)
+- [Security Best Practices](#security-best-practices)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## ✨ Features
 
@@ -30,6 +31,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - OTP verification with rate limiting and security features
   - 10-minute token expiration for password reset
   - 5-minute OTP expiration for enhanced security
+  - Max two active login sessions per user
 
 - 👥 **User Management**
   - User registration and login
@@ -221,6 +223,20 @@ npm run seed
 npm run studio
 ```
 
+### Database Commands Summary
+
+Here is a summary of essential Prisma commands for managing your database:
+
+| Command                   | Description                                                                                                                                                                                                                                                                                                                           | Usage Notes                                                                                                                                                                                                           |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run generate`        | Generates the Prisma Client based on your `schema.prisma` file. This command should be run whenever your Prisma schema changes to ensure your application can interact with the updated database schema. It is often run automatically during `postinstall`.                                                                          | **Before:** Ensure your `schema.prisma` is up-to-date with your desired database structure.                                                                                                                             |
+| `npm run migrate:dev`     | Creates new migration files based on changes in your Prisma schema, applies them to the database, and then generates the Prisma Client. This is typically used during development.                                                                                                                                                      | **Before:** Make sure your `schema.prisma` reflects the desired changes. **After:** Verify that the migration ran successfully and the Prisma Client is regenerated.                                                   |
+| `npm run migrate:deploy`  | Applies pending migrations to the database in a production environment. This command does not create new migrations; it only applies existing ones.                                                                                                                                                                                   | **Before:** Ensure all migration files are present and correctly versioned in your deployment environment. **After:** Confirm that the database schema is up-to-date with the deployed application's schema.             |
+| `npm run db:push`         | Pushes the current state of your Prisma schema to the database without creating a migration. Useful for rapid development and prototyping or when you are certain no data loss will occur.                                                                                                                                            | **Caution:** This command can lead to data loss if used on a database with existing data that conflicts with schema changes. Only use in development or when you are sure about the data implications.                 |
+| `npm run migrate:reset`   | Resets your database by dropping all data and tables, then re-applies all migrations from scratch, and optionally seeds the database. Useful for cleaning up and restarting your database state during development.                                                                                                                  | **Caution:** This will irrevocably delete all data in your database. Only use in development environments where data loss is acceptable.                                                                                 |
+| `npm run studio`          | Opens Prisma Studio, a visual editor for your database. It allows you to view, edit, and manage your data directly.                                                                                                                                                                                                                 | Useful for inspecting data and debugging during development.                                                                                                                                                            |
+| `npm run seed`            | Runs the seeding script to populate your database with initial data.                                                                                                                                                                                                                                                                  | **Before:** Ensure your database schema is up-to-date (`migrate:dev` or `migrate:deploy`). **After:** Verify that the expected data has been inserted into the database.                                             |
+
 ## 🏃 Running the Application
 
 ### Development Mode
@@ -249,7 +265,16 @@ npm start
 
 ## 📡 API Documentation
 
-For detailed API documentation, please see the [API.md](./API.md) file.
+For detailed API documentation, please see the [API Documentation Index](./docs/index.md) file.
+- Centralized API documentation now available under the `docs/` directory, providing detailed endpoints for Authentication, User Management, and more.
+
+## 📄 Swagger UI
+
+This project includes Swagger UI for interactive API documentation. You can access it when the application is running.
+
+- **URL:** `http://localhost:5000/api-docs/`
+
+---
 
 ## 🚀 Deployment
 
@@ -266,6 +291,10 @@ npm install -g vercel
 ```bash
 vercel --prod
 ```
+
+### Live Demo
+
+You can access the live demo of the application here: [POS Inventory Backend](https://pos-inventory-backend-sable.vercel.app)
 
 ### Environment Setup
 

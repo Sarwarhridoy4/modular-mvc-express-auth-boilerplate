@@ -1,0 +1,33 @@
+feat: Implement maximum 2 active sessions per user
+
+This commit introduces a new feature to enforce a maximum of two active login sessions per user. If a user attempts to log in from a third device:
+
+- The oldest active session for that user will be automatically terminated.
+- The new login will be allowed to proceed.
+- The user on the newly logged-in device (the third device) will receive a special response indicating that an older session was terminated and that their current session will be automatically logged out in 10 seconds (client-side handling required for notification display and delayed logout).
+
+**Changes include:**
+- **`src/app/modules/auth/auth.type.ts`**: Modified `UserWithTokens` interface to include `autoLogoutScheduled: boolean` and `autoLogoutMessage: string | undefined` to carry auto-logout information to the client.
+- **`src/app/modules/auth/auth.service.ts`**:
+  - Removed the previous logic that threw an error when the session limit was reached in `loginWithOTP`.
+  - Implemented new logic within `loginWithOTP` to identify and delete the oldest active session if the total active sessions exceed two.
+  - Set `autoLogoutScheduled` and `autoLogoutMessage` flags based on whether an old session was terminated.
+- **`src/app/modules/auth/auth.controller.ts`**:
+  - Updated the `sendResponse` in the `loginWithOTP` controller to include the `autoLogoutScheduled` and `autoLogoutMessage` flags.
+  - Adjusted the response message dynamically to inform the client if an auto-logout was triggered.
+
+---
+
+fix(lint): Resolve parsing errors and lint warnings; add eslint config
+
+This commit addresses several issues found during project scanning and linting, ensuring code quality and proper configuration.
+
+**Changes include:**
+- **`.eslintrc.json`**: A new ESLint configuration file was created to enable proper linting for the TypeScript project.
+- **`package.json` and `bun.lock`**: Updated due to installing/removing ESLint and TypeScript dependencies to achieve compatibility.
+- **`src/app/modules/auth/auth.service.ts`**:
+  - Fixed a critical parsing error within the `loginWithOTP` function by correcting the placement of `tokens` creation and `return` statements and ensuring proper block closure.
+  - Resolved `@typescript-eslint/no-non-null-assertion` warnings in `loginWithEmailAndPassword` and `requestOTP` by refactoring `if` conditions with explicit null checks.
+  - Resolved `@typescript-eslint/no-unused-vars` warning for `isPasswordValid` in `loginWithEmailAndPassword` by restructuring the conditional logic.
+- **`src/utils/tokenGenerator.ts`**: Resolved `@typescript-eslint/no-inferrable-types` error by removing a redundant type annotation.
+- **`.eslintrc.json`**: Configured `@typescript-eslint/no-unused-vars` to ignore parameters prefixed with `_` to resolve warnings in middleware functions.

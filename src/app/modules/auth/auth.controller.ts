@@ -35,7 +35,10 @@ const loginWithEmailAndPassword = catchAsync(
  * 🔐 Login with OTP - Complete login after OTP verification
  */
 const loginWithOTP = catchAsync(async (req: Request, res: Response) => {
-  const userWithTokens = await authService.loginWithOTP(req.body);
+  const userAgent = req.headers['user-agent'] || 'Unknown';
+  const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown';
+
+  const userWithTokens = await authService.loginWithOTP({ ...req.body, userAgent, ipAddress });
   const { tokens, ...safeUser } = userWithTokens;
 
   setAuthCookie(res, {
@@ -43,25 +46,40 @@ const loginWithOTP = catchAsync(async (req: Request, res: Response) => {
     refreshToken: tokens.refreshToken,
   });
 
+  let message = "Login successful";
+  if (userWithTokens.autoLogoutScheduled) {
+    message = userWithTokens.autoLogoutMessage || "Login successful, but an older session was terminated.";
+  }
+
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: "Login successful",
+    message: message,
     data: {
       ...safeUser,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
+      autoLogoutScheduled: userWithTokens.autoLogoutScheduled,
+      autoLogoutMessage: userWithTokens.autoLogoutMessage,
     },
   });
 });
 
 const logout = catchAsync(
-  async (_req: Request, res: Response, _next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
       sameSite: "none",
     };
+
+    // Check if req.user and req.user.sessionId exist
+    if (req.user && req.user.sessionId) {
+      await authService.logoutUser(req.user.sessionId);
+    } else {
+      // Handle the case where sessionId is not available, maybe log a warning
+      console.warn("Session ID not found during logout. Skipping session deletion.");
+    }
 
     res.clearCookie("accessToken", cookieOptions);
     res.clearCookie("refreshToken", cookieOptions);
@@ -126,7 +144,10 @@ const requestOTP = catchAsync(async (req: Request, res: Response) => {
  * 🔐 Verify OTP - Verify OTP and login user
  */
 const verifyOTP = catchAsync(async (req: Request, res: Response) => {
-  const userWithTokens = await authService.verifyOTP(req.body);
+  const userAgent = req.headers['user-agent'] || 'Unknown';
+  const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown';
+
+  const userWithTokens = await authService.verifyOTP({ ...req.body, userAgent, ipAddress });
   const { tokens, ...safeUser } = userWithTokens;
 
   setAuthCookie(res, {

@@ -29,6 +29,8 @@ export type RequestOTPPayload = {
 export type VerifyOTPPayload = {
   email: string;
   otp: string;
+  userAgent?: string;
+  ipAddress?: string;
 };
 
 export interface UserWithTokens {
@@ -41,5 +43,8 @@ export interface UserWithTokens {
   tokens: {
     accessToken: string;
     refreshToken: string;
+    expiresIn: string; // Add expiresIn
   };
+  autoLogoutScheduled?: boolean;
+  autoLogoutMessage?: string;
 }

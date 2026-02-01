@@ -69,17 +69,13 @@ const loginWithEmailAndPassword = async (
   });
   if (!user) throw new AppError(StatusCodes.NOT_FOUND, "User not found");
 
-  const isPasswordValid = await bcryptjs.compare(
-    payload.password,
-    user.password,
-  );
-  if (!isPasswordValid)
+  if (!(await bcryptjs.compare(payload.password, user.password))) {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Password is incorrect!");
-
+  }
   // Check if user is blocked from requesting OTP
-  if (isOTPBlocked(user.otpBlockedUntil)) {
+  if (user.otpBlockedUntil && isOTPBlocked(user.otpBlockedUntil)) {
     const blockedMinutes = Math.ceil(
-      (user.otpBlockedUntil!.getTime() - new Date().getTime()) / 60000,
+      (user.otpBlockedUntil.getTime() - new Date().getTime()) / 60000,
     );
     throw new AppError(
       StatusCodes.TOO_MANY_REQUESTS,
@@ -158,6 +154,9 @@ const loginWithOTP = async (
 ): Promise<UserWithTokens> => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
+    include: {
+      sessions: true, // Include sessions to check count
+    },
   });
 
   if (!user) {
@@ -204,11 +203,28 @@ const loginWithOTP = async (
     },
   });
 
-  const tokens = createUserTokens({
+  let autoLogoutScheduled = false;
+  let autoLogoutMessage: string | undefined = undefined;
+
+  // Check active sessions and enforce limit
+  if (user.sessions.length >= 2) {
+    // Sort sessions by createdAt to find the oldest
+    const oldestSession = user.sessions.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
+
+    // Delete the oldest session
+    await prisma.userSession.delete({
+      where: { id: oldestSession.id },
+    });
+
+    autoLogoutScheduled = true;
+    autoLogoutMessage = "An older session was automatically logged out. This session will be logged out in 10 seconds due to device limit.";
+  }
+
+  const tokens = await createUserTokens({
     id: user.id,
     email: user.email,
     role: user.role,
-  });
+  }, payload.userAgent, payload.ipAddress);
 
   return {
     id: user.id,
@@ -218,6 +234,8 @@ const loginWithOTP = async (
     isActive: user.isActive,
     createdAt: user.createdAt,
     tokens,
+    autoLogoutScheduled,
+    autoLogoutMessage,
   };
 };
 
@@ -340,9 +358,9 @@ const requestOTP = async (payload: RequestOTPPayload) => {
   }
 
   // Check if user is blocked from requesting OTP
-  if (isOTPBlocked(user.otpBlockedUntil)) {
+  if (user.otpBlockedUntil && isOTPBlocked(user.otpBlockedUntil)) {
     const blockedMinutes = Math.ceil(
-      (user.otpBlockedUntil!.getTime() - new Date().getTime()) / 60000,
+      (user.otpBlockedUntil.getTime() - new Date().getTime()) / 60000,
     );
     throw new AppError(
       StatusCodes.TOO_MANY_REQUESTS,
@@ -420,6 +438,9 @@ const verifyOTP = async (
 ): Promise<UserWithTokens> => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
+    include: {
+      sessions: true, // Include sessions to check count
+    },
   });
 
   if (!user) {
@@ -466,11 +487,19 @@ const verifyOTP = async (
     },
   });
 
-  const tokens = createUserTokens({
+  // Check active sessions
+  if (user.sessions.length >= 2) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      "You have reached the maximum number of active devices (2). Please log out from another device.",
+    );
+  }
+
+  const tokens = await createUserTokens({
     id: user.id,
     email: user.email,
     role: user.role,
-  });
+  }, payload.userAgent, payload.ipAddress);
 
   return {
     id: user.id,
@@ -483,6 +512,17 @@ const verifyOTP = async (
   };
 };
 
+/**
+ * 🔒 Logout User - Delete user session
+ */
+const logoutUser = async (sessionId: string) => {
+  await prisma.userSession.delete({
+    where: {
+      id: sessionId,
+    },
+  });
+};
+
 export default {
   signupUser,
   loginWithEmailAndPassword,
@@ -491,4 +531,5 @@ export default {
   resetPassword,
   requestOTP,
   verifyOTP,
+  logoutUser,
 };
