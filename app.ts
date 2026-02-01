@@ -15,6 +15,9 @@ import swaggerSpec from './src/config/swagger.config.js'; // Adjust path if nece
 
 const app: Application = express();
 
+// Trust proxy - required for proper IP detection behind proxies/load balancers
+app.set('trust proxy', true);
+
 // Middleware
 app.use(
   cors({

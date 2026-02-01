@@ -4,6 +4,7 @@ import { sendResponse } from "../../../utils/sendResponse.js";
 import authService from "./auth.service.js";
 import type { CookieOptions, NextFunction, Request, Response } from "express";
 import { setAuthCookie } from "../../../utils/setCookie.js";
+import { getClientIp } from "../../../utils/getClientIp.js";
 
 const signupUser = catchAsync(async (req: Request, res: Response) => {
   const user = await authService.signupUser(req.body);
@@ -36,7 +37,7 @@ const loginWithEmailAndPassword = catchAsync(
  */
 const loginWithOTP = catchAsync(async (req: Request, res: Response) => {
   const userAgent = req.headers['user-agent'] || 'Unknown';
-  const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown';
+  const ipAddress = getClientIp(req);
 
   const userWithTokens = await authService.loginWithOTP({ ...req.body, userAgent, ipAddress });
   const { tokens, ...safeUser } = userWithTokens;
@@ -145,7 +146,7 @@ const requestOTP = catchAsync(async (req: Request, res: Response) => {
  */
 const verifyOTP = catchAsync(async (req: Request, res: Response) => {
   const userAgent = req.headers['user-agent'] || 'Unknown';
-  const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown';
+  const ipAddress = getClientIp(req);
 
   const userWithTokens = await authService.verifyOTP({ ...req.body, userAgent, ipAddress });
   const { tokens, ...safeUser } = userWithTokens;
