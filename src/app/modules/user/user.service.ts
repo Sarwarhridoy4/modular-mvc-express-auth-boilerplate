@@ -13,6 +13,28 @@ const getAllUsers = async (query: Record<string, string>): Promise<{ meta: any, 
   return { meta, data };
 };
 
+const getSingleUser = async (id: string): Promise<SafeUser | null> => {
+  return prisma.user.findUnique({
+    where: { id },
+  });
+};
+
+const updateUserProfilePicture = async (
+  userId: string,
+  profilePicUrl: string,
+  profilePicPublicId: string
+): Promise<SafeUser> => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      profilePicUrl,
+      profilePicPublicId,
+    },
+  });
+};
+
 export default {
   getAllUsers,
+  getSingleUser,
+  updateUserProfilePicture,
 };

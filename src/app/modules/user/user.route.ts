@@ -2,6 +2,7 @@ import { Router } from "express";
 import userController from './user.controller.js';
 import { checkAuth } from '../../middleware/CheckAuth.js';
 import { UserRole } from "@prisma/client";
+import { upload } from '../../../config/multer.config.js';
 
 /**
  * @swagger
@@ -100,5 +101,38 @@ const router = Router();
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get("/", checkAuth(UserRole.ADMIN), userController.getAllUsers);
+
+/**
+ * @swagger
+ * /users/upload-profile-pic:
+ *   patch:
+ *     summary: Upload user profile picture
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               profilePic:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Profile picture uploaded successfully
+ *       400:
+ *         description: Bad request (e.g., no file uploaded, invalid file type)
+ *       401:
+ *         description: Unauthorized
+ */
+router.patch(
+  "/upload-profile-pic",
+  checkAuth(UserRole.CASHIER),
+  upload.single("profilePic"),
+  userController.uploadProfilePicture
+);
 
 export const UserRoutes = router;
