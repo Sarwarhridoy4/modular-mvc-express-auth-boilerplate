@@ -1,3 +1,9 @@
+feat: Add new API log and post documentation files
+
+This commit adds documentation files for API logs and posts.
+
+---
+
 feat: Implement maximum 2 active sessions per user
 
 This commit introduces a new feature to enforce a maximum of two active login sessions per user. If a user attempts to log in from a third device:
