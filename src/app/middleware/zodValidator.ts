@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ZodObject } from "zod";
+import { ZodObject, ZodRawShape } from "zod";
 
 /**
  * Middleware to validate request body, query, or parameters against a Zod schema.
@@ -49,11 +49,11 @@ import { ZodObject } from "zod";
  * router.get('/users/:id', zodValidator(idSchema, 'params'), userController.getUserById);
  */
 export const zodValidator =
-  (zodSchema: ZodObject<any>, type: 'body' | 'query' | 'params' = 'body') =>
+  (zodSchema: ZodObject<ZodRawShape>, type: 'body' | 'query' | 'params' = 'body') =>
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
       // Determine which part of the request to validate
-      let dataToValidate: any;
+      let dataToValidate: unknown;
       if (type === 'body') {
         dataToValidate = req.body;
       } else if (type === 'query') {

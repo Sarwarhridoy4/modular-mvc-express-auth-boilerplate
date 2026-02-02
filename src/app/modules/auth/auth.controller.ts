@@ -74,12 +74,12 @@ const logout = catchAsync(
       sameSite: "none",
     };
 
-    // Check if req.user and req.user.sessionId exist
-    if (req.user && req.user.sessionId) {
+    // Check if req.user and req.user.sessionId exist and is a string
+    if (req.user && typeof req.user.sessionId === 'string') {
       await authService.logoutUser(req.user.sessionId);
     } else {
       // Handle the case where sessionId is not available, maybe log a warning
-      console.warn("Session ID not found during logout. Skipping session deletion.");
+      console.warn("Session ID not found or invalid type during logout. Skipping session deletion.");
     }
 
     res.clearCookie("accessToken", cookieOptions);

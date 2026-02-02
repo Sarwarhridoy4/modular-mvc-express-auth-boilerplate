@@ -4,7 +4,7 @@ import { getClientIp } from '../../utils/getClientIp';
 
 export const apiLogger = async (req: Request, res: Response, next: NextFunction) => {
   const originalSend = res.send;
-  let responseBody: any;
+  let responseBody: unknown;
 
   res.send = function (body) {
     responseBody = body;
@@ -25,7 +25,7 @@ export const apiLogger = async (req: Request, res: Response, next: NextFunction)
         data: {
           ...log,
           statusCode: res.statusCode,
-          responseBody: responseBody ? responseBody.toString() : null,
+          responseBody: responseBody ? (typeof responseBody === 'object' ? JSON.stringify(responseBody) : String(responseBody)) : null,
         },
       });
     } catch (error) {
@@ -39,7 +39,7 @@ export const apiLogger = async (req: Request, res: Response, next: NextFunction)
         data: {
           ...log,
           statusCode: res.statusCode || 500,
-          responseBody: responseBody ? responseBody.toString() : null,
+          responseBody: responseBody ? (typeof responseBody === 'object' ? JSON.stringify(responseBody) : String(responseBody)) : null,
           error: err.stack,
         },
       });

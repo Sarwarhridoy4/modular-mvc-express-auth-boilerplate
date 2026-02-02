@@ -39,8 +39,8 @@ export const generateToken = (
 ): string => {
   try {
     return jwt.sign(payload, secret, { expiresIn } as SignOptions);
-  } catch (err: any) {
-    throw new AppError(500, "Failed to generate token", err?.message);
+  } catch (err: unknown) {
+    throw new AppError(500, "Failed to generate token", (err as Error)?.message);
   }
 };
 
@@ -72,8 +72,8 @@ export const generateToken = (
 export const verifyToken = (token: string, secret: string): AuthJwtPayload => {
   try {
     return jwt.verify(token, secret) as AuthJwtPayload;
-  } catch (err: any) {
-    throw new AppError(401, "Invalid or expired token", err?.message);
+  } catch (err: unknown) {
+    throw new AppError(401, "Invalid or expired token", (err as Error)?.message);
   }
 };
 

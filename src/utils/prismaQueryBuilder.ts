@@ -8,8 +8,8 @@ export class PrismaQueryBuilder { // T will now represent the type of the model'
   public modelName: keyof PrismaClient;
   public query: Record<string, string>;
   public prismaOptions: {
-    where?: Record<string, any>;
-    orderBy?: Record<string, any>;
+    where?: Record<string, unknown>;
+    orderBy?: Record<string, 'asc' | 'desc'>;
     select?: Record<string, boolean>;
     skip?: number;
     take?: number;
@@ -23,7 +23,7 @@ export class PrismaQueryBuilder { // T will now represent the type of the model'
   }
 
   filter(): this {
-    const filterConditions: Record<string, any> = {};
+    const filterConditions: Record<string, unknown> = {};
 
     for (const key in this.query) {
       if (!excludeField.includes(key)) {
@@ -101,8 +101,8 @@ export class PrismaQueryBuilder { // T will now represent the type of the model'
   }
 
   build(): {
-    where?: Record<string, any>;
-    orderBy?: Record<string, any>;
+    where?: Record<string, unknown>;
+    orderBy?: Record<string, 'asc' | 'desc'>;
     select?: Record<string, boolean>;
     skip?: number;
     take?: number;
@@ -116,6 +116,7 @@ export class PrismaQueryBuilder { // T will now represent the type of the model'
     total: number;
     totalPage: number;
   }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const totalDocuments = await (this.prismaClient[this.modelName] as any).count({ where: this.prismaOptions.where });
 
     const page = Number(this.query.page) || 1;

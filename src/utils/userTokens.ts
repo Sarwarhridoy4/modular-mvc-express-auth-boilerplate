@@ -15,9 +15,10 @@ import { AuthJwtPayload } from '../app/modules/auth/auth.interface.js';
  * this session information, along with user details, to generate a short-lived
  * access token and a longer-lived refresh token. Both tokens are JWTs.
  *
- * @param {object} user - The user object containing `id`, `email`, and `role`.
+ * @param {object} user - The user object containing `id`, `email`, `name` and `role`.
  * @param {string} user.id - The unique identifier of the user.
  * @param {string} user.email - The email address of the user.
+ * @param {string} user.name - The name of the user.
  * @param {UserRole} user.role - The role of the user (e.g., ADMIN, USER).
  * @param {string} [userAgent] - The user-agent string from the client's request.
  * @param {string} [ipAddress] - The IP address of the client.
@@ -43,6 +44,7 @@ import { AuthJwtPayload } from '../app/modules/auth/auth.interface.js';
  */
 export const createUserTokens = async (user: {
   id: string;
+  name: string;
   email: string;
   role: UserRole;
 }, userAgent?: string, ipAddress?: string) => {
@@ -56,7 +58,8 @@ export const createUserTokens = async (user: {
   });
 
   const jwtPayload: AuthJwtPayload = {
-    userId: user.id,
+    id: user.id,
+    name: user.name,
     email: user.email,
     role: user.role,
     sessionId: session.id, // Include sessionId in JWT payload
@@ -144,7 +147,8 @@ export const createNewAccessTokenWithRefreshToken = async (
 
     const newAccessToken = generateToken(
       {
-        userId: user.id,
+        id: user.id,
+        name: user.name,
         email: user.email,
         role: user.role,
         sessionId: decoded.sessionId, // Keep session ID in new access token

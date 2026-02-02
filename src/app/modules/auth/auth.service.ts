@@ -260,10 +260,11 @@ const loginWithOTP = async (
 
     autoLogoutScheduled = true;
     autoLogoutMessage = "An older session was automatically logged out. This session will be logged out in 10 seconds due to device limit.";
-  }
+  } // Closing brace added here
 
   const tokens = await createUserTokens({
     id: user.id,
+    name: user.name,
     email: user.email,
     role: user.role,
   }, payload.userAgent, payload.ipAddress);
@@ -552,6 +553,7 @@ const verifyOTP = async (
 
   const tokens = await createUserTokens({
     id: user.id,
+    name: user.name,
     email: user.email,
     role: user.role,
   }, payload.userAgent, payload.ipAddress);
