@@ -1,6 +1,12 @@
 import { prisma } from '../../../config/db.js';
 import { Post } from '@prisma/client';
 
+// Define an extended Post type to ensure TypeScript recognizes the thumbnail fields
+type ExtendedPost = Post & {
+  thumbnailUrl: string | null;
+  thumbnailPublicId: string | null;
+};
+
 type CreatePostInput = {
   title: string;
   content?: string;
@@ -38,7 +44,7 @@ const getAllPosts = async (): Promise<Post[]> => {
   });
 };
 
-const getSinglePost = async (id: number): Promise<Post | null> => {
+const getSinglePost = async (id: number): Promise<ExtendedPost | null> => {
   return prisma.post.findUnique({
     where: { id },
     include: {
