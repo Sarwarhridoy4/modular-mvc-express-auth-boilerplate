@@ -22,7 +22,7 @@ interface SendEmailOptions {
   to: string;
   subject: string;
   templateName: string;
-  templateData?: Record<string, any>;
+  templateData?: Record<string, unknown>;
   attachments?: {
     filename: string;
     content: Buffer | string;
@@ -77,7 +77,7 @@ interface SendEmailOptions {
  *     });
  *     console.log('Password reset email sent successfully.');
  *   } catch (error) {
- *     console.error('Failed to send password reset email:', error);
+ *   console.error('Failed to send password reset email:', error);
  *   }
  * }
  */
@@ -115,8 +115,8 @@ export const sendEmail = async ({
 
     console.log("📧 Email sent successfully:", info.messageId);
     console.log("Preview URL:", nodemailer.getTestMessageUrl(info));
-  } catch (error: any) {
-    console.error("Email sending failed:", error.message);
+  } catch (error: unknown) {
+    console.error("Email sending failed:", (error as Error).message);
     throw new AppError(500, "Email service unavailable");
   }
 };

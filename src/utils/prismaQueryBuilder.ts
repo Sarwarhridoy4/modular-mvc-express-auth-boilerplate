@@ -1,15 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 
 // Fields to exclude from general filtering, these are handled by specific methods
-const excludeField = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+const excludeField = ['searchTerm', 'sort', 'limit', 'page', 'fields', 'startDate', 'endDate'];
 
 export class PrismaQueryBuilder { // T will now represent the type of the model's data, not the model itself
   public prismaClient: PrismaClient;
   public modelName: keyof PrismaClient;
   public query: Record<string, string>;
   public prismaOptions: {
-    where?: Record<string, any>;
-    orderBy?: Record<string, any>;
+    where?: Record<string, unknown>;
+    orderBy?: Record<string, 'asc' | 'desc'>;
     select?: Record<string, boolean>;
     skip?: number;
     take?: number;
@@ -23,7 +23,7 @@ export class PrismaQueryBuilder { // T will now represent the type of the model'
   }
 
   filter(): this {
-    const filterConditions: Record<string, any> = {};
+    const filterConditions: Record<string, unknown> = {};
 
     for (const key in this.query) {
       if (!excludeField.includes(key)) {
@@ -44,6 +44,18 @@ export class PrismaQueryBuilder { // T will now represent the type of the model'
         }
       }
     }
+
+    // Handle startDate and endDate for createdAt
+    if (this.query.startDate || this.query.endDate) {
+      filterConditions.createdAt = {};
+      if (this.query.startDate) {
+        (filterConditions.createdAt as Record<string, unknown>).gte = new Date(this.query.startDate);
+      }
+      if (this.query.endDate) {
+        (filterConditions.createdAt as Record<string, unknown>).lte = new Date(this.query.endDate);
+      }
+    }
+
     this.prismaOptions.where = { ...this.prismaOptions.where, ...filterConditions };
     return this;
   }
@@ -101,8 +113,8 @@ export class PrismaQueryBuilder { // T will now represent the type of the model'
   }
 
   build(): {
-    where?: Record<string, any>;
-    orderBy?: Record<string, any>;
+    where?: Record<string, unknown>;
+    orderBy?: Record<string, 'asc' | 'desc'>;
     select?: Record<string, boolean>;
     skip?: number;
     take?: number;
@@ -116,6 +128,7 @@ export class PrismaQueryBuilder { // T will now represent the type of the model'
     total: number;
     totalPage: number;
   }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const totalDocuments = await (this.prismaClient[this.modelName] as any).count({ where: this.prismaOptions.where });
 
     const page = Number(this.query.page) || 1;

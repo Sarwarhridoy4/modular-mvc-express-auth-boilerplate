@@ -9,6 +9,8 @@ model User {
   email                 String   @unique
   password              String
   name                  String
+  profilePicUrl         String?
+  profilePicPublicId    String?
   role                  UserRole @default(CASHIER)
   isActive              Boolean  @default(true)
   passwordResetToken    String?

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Request } from "express";
 
 declare global {
@@ -8,7 +9,7 @@ declare global {
         name?: string;
         email: string;
         role?: string;
-        [key: string]: any;
+        [key: string]: unknown;
       };
     }
   }

@@ -8,3 +8,5 @@ This documentation provides detailed information about each API endpoint, includ
 
 - [Authentication API](./auth.md)
 - [User Management API](./user.md)
+- [Api Log API](./api-log.md)
+- [Post API](./post.md)
