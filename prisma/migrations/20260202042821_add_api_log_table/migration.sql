@@ -1,0 +1,18 @@
+-- CreateTable
+CREATE TABLE "ApiLog" (
+    "id" TEXT NOT NULL,
+    "method" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "ip" TEXT,
+    "requestBody" TEXT,
+    "responseBody" TEXT,
+    "statusCode" INTEGER,
+    "userId" TEXT,
+    "error" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ApiLog_pkey" PRIMARY KEY ("id")
+);
+
+-- AddForeignKey
+ALTER TABLE "ApiLog" ADD CONSTRAINT "ApiLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

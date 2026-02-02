@@ -22,4 +22,5 @@ model User {
   updatedAt             DateTime @updatedAt
   posts                 Post[]
   sessions              UserSession[]
+  apiLogs               ApiLog[]
 }

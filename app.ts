@@ -9,6 +9,9 @@ import { env } from "./src/config/env.js";
 import notFound from "./src/app/middleware/notFound.js";
 import { globalErrorHandler } from "./src/app/middleware/globalErrorHandler.js";
 
+// cron job
+import "./src/utils/cron.js";
+
 // Swagger imports
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './src/config/swagger.config.js'; // Adjust path if necessary
@@ -28,6 +31,10 @@ app.use(
 app.use(compression());
 app.use(express.json());
 app.use(cookieParser());
+
+// API Logger
+import { apiLogger } from './src/app/middleware/apiLogger.js';
+app.use(apiLogger);
 
 // Routes
 app.use("/api/v1", router);

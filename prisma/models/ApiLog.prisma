@@ -1,0 +1,14 @@
+model ApiLog {
+  id          String   @id @default(cuid())
+  method      String
+  url         String
+  ip          String?
+  requestBody String?
+  responseBody String?
+  statusCode  Int?
+  userId      String?
+  error       String?
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

@@ -9,5 +9,10 @@ datasource db {
   
 }
 
+/// import ./models/User.prisma
+/// import ./models/UserSession.prisma
+/// import ./models/Post.prisma
+/// import ./models/ApiLog.prisma
+
 
 
