@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { apiLogController } from './api-log.controller';
-import { CheckAuth } from '../../middleware/CheckAuth';
+import { checkAuth } from '../../middleware/CheckAuth';
 import { UserRole } from '@prisma/client';
 
 const router = Router();
 
 router.delete(
   '/',
-  CheckAuth(UserRole.SUPER_ADMIN),
+  checkAuth(UserRole.SUPER_ADMIN),
   apiLogController.clearApiLogs
 );
 

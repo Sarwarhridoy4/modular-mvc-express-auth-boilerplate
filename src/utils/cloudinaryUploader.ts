@@ -5,7 +5,8 @@ export const uploadToCloudinary = async (
   folder: string = 'uploads'
 ) => {
   try {
-    const result = await cloudinary.uploader.upload(file, {
+    const base64File = `data:${'application/octet-stream'};base64,${file.toString('base64')}`;
+    const result = await cloudinary.uploader.upload(base64File, {
       folder: folder,
       resource_type: 'auto', // Automatically detect file type (image, video, raw)
     });

@@ -4,7 +4,6 @@ import { sendResponse } from '../../../utils/sendResponse.js';
 import { StatusCodes } from 'http-status-codes';
 import { uploadToCloudinary, deleteFromCloudinary } from '../../../utils/cloudinaryUploader.js';
 import { postService } from './post.service.js';
-import { prisma } from '../../../config/db.js';
 
 
 const createPost = catchAsync(async (req: Request, res: Response) => {
@@ -45,7 +44,7 @@ const createPost = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getAllPosts = catchAsync(async (req: Request, res: Response) => {
+const getAllPosts = catchAsync(async (_req: Request, res: Response) => {
   const posts = await postService.getAllPosts();
   sendResponse(res, {
     success: true,
@@ -63,6 +62,7 @@ const getSinglePost = catchAsync(async (req: Request, res: Response) => {
       success: false,
       statusCode: StatusCodes.NOT_FOUND,
       message: 'Post not found',
+      data: null,
     });
   }
   sendResponse(res, {
@@ -83,6 +83,7 @@ const updatePost = catchAsync(async (req: Request, res: Response) => {
       success: false,
       statusCode: StatusCodes.UNAUTHORIZED,
       message: "User not authenticated.",
+      data: null,
     });
   }
 

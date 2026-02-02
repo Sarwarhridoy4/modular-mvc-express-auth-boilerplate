@@ -4,7 +4,7 @@ import { apiLogService } from './api-log.service';
 import { sendResponse } from '../../../utils/sendResponse';
 import { StatusCodes } from 'http-status-codes';
 
-const clearApiLogs = catchAsync(async (req: Request, res: Response) => {
+const clearApiLogs = catchAsync(async (_req: Request, res: Response) => {
   const result = await apiLogService.clearApiLogs();
   sendResponse(res, {
     success: true,

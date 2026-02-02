@@ -38,6 +38,13 @@ import { upload } from '../../../config/multer.config.js';
  *         email:
  *           type: string
  *           format: email
+ *         profilePicUrl:
+ *           type: string
+ *           format: url
+ *           nullable: true
+ *         profilePicPublicId:
+ *           type: string
+ *           nullable: true
  *         role:
  *           type: string
  *           enum: [SUPER_ADMIN, ADMIN, CASHIER]
@@ -123,10 +130,46 @@ router.get("/", checkAuth(UserRole.ADMIN), userController.getAllUsers);
  *     responses:
  *       200:
  *         description: Profile picture uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Profile picture uploaded successfully."
+ *                 data:
+ *                   $ref: '#/components/schemas/UserResponse'
  *       400:
  *         description: Bad request (e.g., no file uploaded, invalid file type)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
- *         description: Unauthorized
+ *         description: Unauthorized (e.g., no valid token, user not authenticated)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.patch(
   "/upload-profile-pic",
