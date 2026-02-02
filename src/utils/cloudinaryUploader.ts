@@ -22,10 +22,23 @@ export const uploadToCloudinary = async (
 
 export const deleteFromCloudinary = async (publicId: string) => {
   try {
+    console.log('🗑️  Attempting to delete from Cloudinary...');
+    console.log('📋 Public ID:', publicId);
+    
     const result = await cloudinary.uploader.destroy(publicId);
+    
+    console.log('✅ Cloudinary deletion result:', result);
+    console.log('📊 Deletion status:', result.result); // 'ok' or 'not found'
+    
+    if (result.result === 'ok') {
+      console.log('✨ Successfully deleted from Cloudinary');
+    } else if (result.result === 'not found') {
+      console.log('⚠️  File not found in Cloudinary (already deleted or never existed)');
+    }
+    
     return result;
   } catch (error) {
-    console.error('Cloudinary deletion error:', error);
+    console.error('❌ Cloudinary deletion error:', error);
     throw new Error('Failed to delete file from Cloudinary.');
   }
 };

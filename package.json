@@ -63,7 +63,7 @@
     "reset": " npx prisma migrate reset",
     "update": " npx prisma db push",
     "studio": "npx prisma studio",
-    "seed": "tsx watch ./src/utils/seed.ts",
+    "seed": "tsx ./src/utils/seed.ts",
     "postinstall": "prisma generate"
   },
   "type": "module"

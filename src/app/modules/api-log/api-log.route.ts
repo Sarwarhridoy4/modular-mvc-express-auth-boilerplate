@@ -188,8 +188,8 @@ router.delete(
 
 router.get(
   '/admin/error-logs',
-  checkAuth(UserRole.SUPER_ADMIN),
-  zodValidator(getErrorLogsSchema),
+  checkAuth(UserRole.SUPER_ADMIN, UserRole.CASHIER),
+  zodValidator(getErrorLogsSchema, 'query'),
   apiLogController.getPaginatedErrorLogs
 );
 

@@ -1,3 +1,61 @@
+feat: Enhanced Swagger UI, improved post management, and API logging
+
+This commit includes major improvements to API documentation, post management with Cloudinary integration, and API log functionality.
+
+**Changes include:**
+
+1. **Swagger UI Enhancements:**
+   - Added interactive testing capabilities directly in Swagger UI
+   - Enabled `persistAuthorization` to keep JWT tokens between page refreshes
+   - Added `displayRequestDuration` to show API response times
+   - Enabled filtering and better navigation
+   - Enhanced documentation with step-by-step testing instructions
+   - Added examples for all request parameters and responses
+
+2. **Post Management Improvements:**
+   - Implemented Prisma transactions for atomic post deletion
+   - Cloudinary assets are now deleted BEFORE database deletion
+   - Added comprehensive console logging for debugging Cloudinary operations
+   - Fixed `ExtendedPost` type to properly include author relationship
+   - Implemented same Cloudinary deletion pattern for update operations
+   - Old thumbnails are automatically deleted when uploading new ones
+   - Added `published` field conversion from string to boolean for multipart/form-data
+   - Updated routes to follow RESTful conventions (removed `/all-posts`, using `/` instead)
+   - Both ADMIN and CASHIER roles can now manage posts
+
+3. **API Log Enhancements:**
+   - Fixed query parameter validation with proper Zod schema structure
+   - Removed nested `query` wrapper from validation schema
+   - Fixed `zodValidator` to handle query parameters correctly using `Object.assign`
+   - CASHIER role can now view error logs alongside SUPER_ADMIN
+   - Proper pagination metadata in responses
+
+4. **Cloudinary Integration:**
+   - Added detailed logging for upload/delete operations
+   - Shows public ID, deletion status, and result messages
+   - Proper error handling with descriptive console messages
+   - Transaction rollback if Cloudinary deletion fails
+
+5. **Bug Fixes:**
+   - Fixed `req.query` read-only property assignment issue in zodValidator
+   - Fixed seed script to exit after execution (removed `watch` flag)
+   - Fixed multipart form-data field name validation (thumbnail vs thumnail typo)
+   - Fixed database validation error for `published` field type mismatch
+
+**Files Modified:**
+- `src/app/modules/post/post.service.ts` - Added transaction-based deletion with Cloudinary
+- `src/app/modules/post/post.controller.ts` - Improved update/delete logic with logging
+- `src/app/modules/post/post.route.ts` - Enhanced Swagger docs, RESTful route naming
+- `src/app/modules/api-log/api-log.validation.ts` - Fixed query schema structure
+- `src/app/modules/api-log/api-log.route.ts` - Added CASHIER role, fixed validator type
+- `src/app/middleware/zodValidator.ts` - Fixed query parameter handling
+- `src/config/swagger.config.ts` - Enhanced with testing instructions and examples
+- `src/utils/cloudinaryUploader.ts` - Added comprehensive debugging logs
+- `app.ts` - Added Swagger UI options for better testing experience
+- `package.json` - Fixed seed script to exit after completion
+
+---
+
 feat: Add new API log and post documentation files
 
 This commit adds documentation files for API logs and posts.

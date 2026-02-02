@@ -64,7 +64,18 @@ export const zodValidator =
         throw new Error(`Invalid validation type: ${type}`);
       }
 
-      req[type] = await zodSchema.parseAsync(dataToValidate); // Reassign validated data back to req
+      const validatedData = await zodSchema.parseAsync(dataToValidate);
+      
+      // Handle reassignment based on type
+      if (type === 'body') {
+        req.body = validatedData;
+      } else if (type === 'params') {
+        req.params = validatedData as any;
+      } else if (type === 'query') {
+        // For query, we need to use Object.assign since query is read-only
+        Object.assign(req.query, validatedData);
+      }
+      
       next();
     } catch (error) {
       next(error);

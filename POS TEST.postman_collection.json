@@ -7,13 +7,23 @@
   },
   "item": [
     {
-      "name": "Login with Email/Password (sends OTP)",
+      "name": "GET OTP LOGIN",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "12345",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"email\":\"kebov81148@okexbit.com\",\r\n    \"password\": \"34eioe38362\"\r\n}",
+          "raw": "{\r\n    \"email\":\"yinoben196@hopesx.com\",\r\n    \"password\": \"34eioe383iutyghyt\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -114,7 +124,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"name\":\"kebov\",\r\n    \"email\":\"kebov81148@okexbit.com\",\r\n    \"password\": \"34eioe38362\"\r\n}",
+          "raw": "{\r\n    \"name\":\"yonobin\",\r\n    \"email\":\"yinoben196@hopesx.com\",\r\n    \"password\": \"34eioe383iutyghyt\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -141,11 +151,21 @@
     {
       "name": "VERIFY OTP LOGIN",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "12345",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"email\":\"kebov81148@okexbit.com\",\r\n    \"otp\": \"320913\"\r\n}",
+          "raw": "{\r\n    \"email\":\"yinoben196@hopesx.com\",\r\n    \"otp\": \"959073\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -173,6 +193,16 @@
     {
       "name": "FORGOT PASSWORD",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "12345",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
@@ -210,6 +240,16 @@
     {
       "name": "RESET PASSWORD",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "12345",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
@@ -245,21 +285,51 @@
       "response": []
     },
     {
-      "name": "Request OTP",
+      "name": "POST",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "12345",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"email\":\"kebov81148@okexbit.com\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "title",
+              "value": "development",
+              "type": "text",
+              "uuid": "603ac91d-85f7-4933-b84b-7eff605a067c"
+            },
+            {
+              "key": "content",
+              "value": "our choice",
+              "type": "text",
+              "uuid": "03adda42-b46a-4253-98a0-792d1ce86369"
+            },
+            {
+              "key": "published",
+              "value": "true",
+              "type": "text",
+              "uuid": "5ad7a7b7-9420-4889-a964-234d0d93d40d"
+            },
+            {
+              "key": "thumbnail",
+              "type": "file",
+              "uuid": "e41c0a07-0737-4868-92a0-4c3a70653ae7",
+              "src": "/C:/Users/lutfur/Pictures/post.png"
             }
-          }
+          ]
         },
         "url": {
-          "raw": "http://localhost:5000/api/v1/auth/request-otp",
+          "raw": "http://localhost:5000/api/v1/posts",
           "protocol": "http",
           "host": [
             "localhost"
@@ -268,29 +338,19 @@
           "path": [
             "api",
             "v1",
-            "auth",
-            "request-otp"
+            "posts"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "Verify OTP (standalone)",
+      "name": "get all post",
       "request": {
-        "method": "POST",
+        "method": "GET",
         "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"email\":\"kebov81148@okexbit.com\",\r\n    \"otp\": \"123456\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
         "url": {
-          "raw": "http://localhost:5000/api/v1/auth/verify-otp",
+          "raw": "http://localhost:5000/api/v1/post/all-posts",
           "protocol": "http",
           "host": [
             "localhost"
@@ -299,8 +359,8 @@
           "path": [
             "api",
             "v1",
-            "auth",
-            "verify-otp"
+            "post",
+            "all-posts"
           ]
         }
       },

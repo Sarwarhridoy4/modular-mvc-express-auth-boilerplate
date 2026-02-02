@@ -22,7 +22,7 @@ const moduleRoutes = [
     route: apiLogRoutes,
   },
   {
-    path: "/posts",
+    path: "/post",
     route: PostRoutes,
   }
 

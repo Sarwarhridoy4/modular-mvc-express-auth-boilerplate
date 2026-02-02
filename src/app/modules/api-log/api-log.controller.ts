@@ -16,7 +16,7 @@ const clearApiLogs = catchAsync(async (_req: Request, res: Response) => {
 });
 
 const getPaginatedErrorLogs = catchAsync(async (req: Request, res: Response) => {
-  const query = req.query as unknown as GetErrorLogsInput['query'];
+  const query = req.query as unknown as GetErrorLogsInput;
   const { logs, totalCount, page, limit } = await apiLogService.getPaginatedErrorLogsForAdmin(query);
 
   sendResponse(res, {

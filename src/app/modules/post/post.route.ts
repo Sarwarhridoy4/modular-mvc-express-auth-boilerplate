@@ -105,7 +105,15 @@ const router = Router();
  * @swagger
  * /posts:
  *   post:
- *     summary: Create a new post (Admin only)
+ *     summary: Create a new post (Admin/Cashier only)
+ *     description: |
+ *       Creates a new post with optional thumbnail image.
+ *       
+ *       **Testing in Swagger UI:**
+ *       1. Click "Try it out"
+ *       2. Fill in the form fields
+ *       3. For thumbnail: Click "Choose File" and select an image
+ *       4. Click "Execute"
  *     tags: [Post]
  *     security:
  *       - bearerAuth: []
@@ -115,16 +123,26 @@ const router = Router();
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
  *             properties:
  *               title:
  *                 type: string
+ *                 example: "My First Post"
+ *                 description: The title of the post
  *               content:
  *                 type: string
+ *                 example: "This is the post content"
+ *                 description: The content/body of the post
  *               published:
- *                 type: boolean
+ *                 type: string
+ *                 enum: ['true', 'false']
+ *                 example: 'false'
+ *                 description: Whether the post should be published (use string 'true' or 'false')
  *               thumbnail:
  *                 type: string
  *                 format: binary
+ *                 description: Post thumbnail image (optional)
  *     responses:
  *       201:
  *         description: Post created successfully
@@ -171,7 +189,7 @@ const router = Router();
  */
 router.post(
   '/',
-  checkAuth(UserRole.ADMIN),
+  checkAuth(UserRole.ADMIN, UserRole.CASHIER),
   upload.single('thumbnail'),
   postController.createPost
 );
@@ -180,15 +198,21 @@ router.post(
  * @swagger
  * /posts:
  *   get:
- *     summary: Get all posts
+ *     summary: Get all posts (Public endpoint)
+ *     description: Retrieve a list of all posts. This endpoint is public and does not require authentication.
  *     tags: [Post]
  *     responses:
  *       200:
- *         description: A list of posts
+ *         description: A list of posts retrieved successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PostListResponse'
+ *             example:
+ *               success: true
+ *               statusCode: 200
+ *               message: "Posts retrieved successfully"
+ *               data: []
  *       500:
  *         description: Internal server error
  *         content:
@@ -249,7 +273,22 @@ router.get('/:id', postController.getSinglePost);
  * @swagger
  * /posts/{id}:
  *   patch:
- *     summary: Update an existing post (Admin only)
+ *     summary: Update an existing post (Admin/Cashier only)
+ *     description: |
+ *       Updates an existing post. Only the post author can update it.
+ *       
+ *       **Features:**
+ *       - Upload new thumbnail (old one will be automatically deleted from Cloudinary)
+ *       - Delete existing thumbnail by setting deleteThumbnail to true
+ *       - Update title, content, or published status
+ *       
+ *       **Testing in Swagger UI:**
+ *       1. Click "Try it out"
+ *       2. Enter the post ID in the path parameter
+ *       3. Fill in the fields you want to update
+ *       4. To replace thumbnail: Upload a new file
+ *       5. To delete thumbnail: Set deleteThumbnail to true
+ *       6. Click "Execute"
  *     tags: [Post]
  *     security:
  *       - bearerAuth: []
@@ -259,9 +298,10 @@ router.get('/:id', postController.getSinglePost);
  *         required: true
  *         schema:
  *           type: integer
- *         description: The ID of the post to update.
+ *         example: 1
+ *         description: The ID of the post to update
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         multipart/form-data:
  *           schema:
@@ -269,16 +309,26 @@ router.get('/:id', postController.getSinglePost);
  *             properties:
  *               title:
  *                 type: string
+ *                 example: "Updated Post Title"
+ *                 description: New title for the post
  *               content:
  *                 type: string
+ *                 example: "Updated content"
+ *                 description: New content for the post
  *               published:
- *                 type: boolean
+ *                 type: string
+ *                 enum: ['true', 'false']
+ *                 example: 'true'
+ *                 description: Publish status (use string 'true' or 'false')
  *               thumbnail:
  *                 type: string
  *                 format: binary
+ *                 description: New thumbnail image (will replace existing one)
  *               deleteThumbnail:
- *                 type: boolean
- *                 description: Set to true to delete the existing thumbnail.
+ *                 type: string
+ *                 enum: ['true', 'false']
+ *                 example: 'false'
+ *                 description: Set to 'true' to delete the existing thumbnail
  *     responses:
  *       200:
  *         description: Post updated successfully
@@ -331,7 +381,7 @@ router.get('/:id', postController.getSinglePost);
  */
 router.patch(
   '/:id',
-  checkAuth(UserRole.ADMIN),
+  checkAuth(UserRole.ADMIN, UserRole.CASHIER),
   upload.single('thumbnail'),
   postController.updatePost
 );
@@ -340,7 +390,21 @@ router.patch(
  * @swagger
  * /posts/{id}:
  *   delete:
- *     summary: Delete a post (Admin only)
+ *     summary: Delete a post (Admin/Cashier only)
+ *     description: |
+ *       Permanently deletes a post and its associated thumbnail from Cloudinary.
+ *       Only the post author can delete it.
+ *       
+ *       **Process:**
+ *       1. Searches for the post in the database
+ *       2. Deletes thumbnail from Cloudinary (if exists)
+ *       3. Deletes post from database using transaction
+ *       4. If Cloudinary deletion fails, database deletion is rolled back
+ *       
+ *       **Testing in Swagger UI:**
+ *       1. Click "Try it out"
+ *       2. Enter the post ID
+ *       3. Click "Execute"
  *     tags: [Post]
  *     security:
  *       - bearerAuth: []
@@ -350,7 +414,8 @@ router.patch(
  *         required: true
  *         schema:
  *           type: integer
- *         description: The ID of the post to delete.
+ *         example: 1
+ *         description: The ID of the post to delete
  *     responses:
  *       200:
  *         description: Post deleted successfully
@@ -395,6 +460,6 @@ router.patch(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete('/:id', checkAuth(UserRole.ADMIN), postController.deletePost);
+router.delete('/:id', checkAuth(UserRole.ADMIN, UserRole.CASHIER), postController.deletePost);
 
 export const PostRoutes = router;

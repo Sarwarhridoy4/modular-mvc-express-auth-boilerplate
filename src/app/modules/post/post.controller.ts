@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { catchAsync } from '../../../utils/catchAsync.js';
 import { sendResponse } from '../../../utils/sendResponse.js';
 import { StatusCodes } from 'http-status-codes';
-import { uploadToCloudinary, deleteFromCloudinary } from '../../../utils/cloudinaryUploader.js';
+import { uploadToCloudinary} from '../../../utils/cloudinaryUploader.js';
 import { postService } from './post.service.js';
 
 
@@ -30,7 +30,7 @@ const createPost = catchAsync(async (req: Request, res: Response) => {
   const newPost = await postService.createPost({
     title,
     content,
-    published,
+    published: published === 'true' || published === true,
     authorId,
     thumbnailUrl,
     thumbnailPublicId,
@@ -99,29 +99,34 @@ const updatePost = catchAsync(async (req: Request, res: Response) => {
 
   let thumbnailUrl: string | undefined = existingPost.thumbnailUrl || undefined;
   let thumbnailPublicId: string | undefined = existingPost.thumbnailPublicId || undefined;
+  const oldThumbnailPublicId = existingPost.thumbnailPublicId || undefined;
 
   if (req.file) {
-    // Delete old thumbnail from Cloudinary if exists
-    if (existingPost.thumbnailPublicId) {
-      await deleteFromCloudinary(existingPost.thumbnailPublicId);
-    }
+    console.log('📤 New thumbnail uploaded, processing...');
     const uploadResult = await uploadToCloudinary(req.file.buffer, `post-thumbnails/${authorId}`);
     thumbnailUrl = uploadResult.url;
     thumbnailPublicId = uploadResult.publicId;
+    console.log('✅ New thumbnail uploaded to Cloudinary');
   } else if (req.body.deleteThumbnail && existingPost.thumbnailPublicId) {
+    console.log('🗑️  Delete thumbnail flag received');
     // If deleteThumbnail flag is sent and a thumbnail exists, delete it
+    const { deleteFromCloudinary } = await import('../../../utils/cloudinaryUploader.js');
     await deleteFromCloudinary(existingPost.thumbnailPublicId);
     thumbnailUrl = undefined;
     thumbnailPublicId = undefined;
   }
 
-  const updatedPost = await postService.updatePost(Number(id), {
-    title,
-    content,
-    published,
-    thumbnailUrl,
-    thumbnailPublicId,
-  });
+  const updatedPost = await postService.updatePost(
+    Number(id),
+    {
+      title,
+      content,
+      published: published === 'true' || published === true,
+      thumbnailUrl,
+      thumbnailPublicId,
+    },
+    oldThumbnailPublicId
+  );
 
   sendResponse(res, {
     success: true,
@@ -153,11 +158,7 @@ const deletePost = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  // Delete thumbnail from Cloudinary if exists
-  if (existingPost.thumbnailPublicId) {
-    await deleteFromCloudinary(existingPost.thumbnailPublicId);
-  }
-
+  // Delete post with transaction (Cloudinary deletion happens inside transaction)
   const deletedPost = await postService.deletePost(Number(id));
 
   sendResponse(res, {

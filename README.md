@@ -42,6 +42,23 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - User profile management
   - Forgot password and reset password flows
 
+- � **Post Management**
+  - Create, read, update, and delete posts
+  - Image upload with Cloudinary integration
+  - Automatic thumbnail management
+  - **Atomic operations with Prisma transactions**
+  - **Cloudinary asset cleanup before database deletion**
+  - **Old thumbnails automatically deleted when uploading new ones**
+  - Author-based authorization
+  - Published/draft status management
+
+- 📊 **API Logging**
+  - Comprehensive API request/response logging
+  - Error log tracking with filtering
+  - Pagination support for log viewing
+  - IP address and user tracking
+  - Super Admin log management
+
 - 📧 **Email Service**
   - Nodemailer integration with SMTP support
   - EJS templating for emails
@@ -54,12 +71,14 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - Global error handling with proper categorization
   - Environment-based configuration
   - Validation errors with detailed messages
+  - Query parameter sanitization
 
 - 🗄️ **Database**
   - PostgreSQL with Prisma ORM
   - Type-safe database queries
   - Database migrations and seeding
   - Prisma Studio for database visualization
+  - Transaction support for atomic operations
 
 ## 🚀 Tech Stack
 

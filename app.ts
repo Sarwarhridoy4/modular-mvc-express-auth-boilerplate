@@ -39,8 +39,17 @@ app.use(apiLogger);
 // Routes
 app.use("/api/v1", router);
 
-// Swagger UI Route
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Swagger UI Route with enhanced options for testing
+const swaggerUiOptions = {
+  explorer: true,
+  swaggerOptions: {
+    persistAuthorization: true, // Keeps authorization between page refreshes
+    displayRequestDuration: true, // Shows request duration
+    filter: true, // Enable filtering by tags
+    tryItOutEnabled: true, // Enable "Try it out" by default
+  },
+};
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
 // Default route for testing
 app.get("/", (_req: Request, res: Response) => {
