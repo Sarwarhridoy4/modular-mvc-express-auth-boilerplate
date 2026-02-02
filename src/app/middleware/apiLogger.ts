@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { db } from '../../config/db';
+import { prisma } from '../../config/db';
 import { getClientIp } from '../../utils/getClientIp';
 
 export const apiLogger = async (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +21,7 @@ export const apiLogger = async (req: Request, res: Response, next: NextFunction)
 
   res.on('finish', async () => {
     try {
-      await db.apiLog.create({
+      await prisma.apiLog.create({
         data: {
           ...log,
           statusCode: res.statusCode,
@@ -35,7 +35,7 @@ export const apiLogger = async (req: Request, res: Response, next: NextFunction)
 
   res.on('error', async (err) => {
     try {
-      await db.apiLog.create({
+      await prisma.apiLog.create({
         data: {
           ...log,
           statusCode: res.statusCode || 500,

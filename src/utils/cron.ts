@@ -1,12 +1,12 @@
 import cron from 'node-cron';
-import { db } from '../config/db';
+import { prisma } from '../config/db';
 
 // Schedule a job to run every day at midnight to delete logs older than 15 days
 cron.schedule('0 0 * * *', async () => {
   const fifteenDaysAgo = new Date(new Date().setDate(new Date().getDate() - 15));
   
   try {
-    const result = await db.apiLog.deleteMany({
+    const result = await prisma.apiLog.deleteMany({
       where: {
         createdAt: {
           lt: fifteenDaysAgo,
