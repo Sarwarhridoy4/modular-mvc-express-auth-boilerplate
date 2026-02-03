@@ -105,7 +105,7 @@ const router = Router();
  * @swagger
  * /posts:
  *   post:
- *     summary: Create a new post (Admin/Cashier only)
+ *     summary: Create a new post (Admin/Super Admin only)
  *     description: |
  *       Creates a new post with optional thumbnail image.
  *       
@@ -189,7 +189,7 @@ const router = Router();
  */
 router.post(
   '/',
-  checkAuth(UserRole.ADMIN, UserRole.CASHIER),
+  checkAuth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   upload.single('thumbnail'),
   postController.createPost
 );
@@ -273,7 +273,7 @@ router.get('/:id', postController.getSinglePost);
  * @swagger
  * /posts/{id}:
  *   patch:
- *     summary: Update an existing post (Admin/Cashier only)
+ *     summary: Update an existing post (Admin/Super Admin only)
  *     description: |
  *       Updates an existing post. Only the post author can update it.
  *       
@@ -381,7 +381,7 @@ router.get('/:id', postController.getSinglePost);
  */
 router.patch(
   '/:id',
-  checkAuth(UserRole.ADMIN, UserRole.CASHIER),
+  checkAuth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   upload.single('thumbnail'),
   postController.updatePost
 );
@@ -390,7 +390,7 @@ router.patch(
  * @swagger
  * /posts/{id}:
  *   delete:
- *     summary: Delete a post (Admin/Cashier only)
+ *     summary: Delete a post (Admin/Super Admin only)
  *     description: |
  *       Permanently deletes a post and its associated thumbnail from Cloudinary.
  *       Only the post author can delete it.
@@ -460,6 +460,6 @@ router.patch(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete('/:id', checkAuth(UserRole.ADMIN, UserRole.CASHIER), postController.deletePost);
+router.delete('/:id', checkAuth(UserRole.ADMIN, UserRole.SUPER_ADMIN), postController.deletePost);
 
 export const PostRoutes = router;

@@ -42,7 +42,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - User profile management
   - Forgot password and reset password flows
 
-- � **Post Management**
+- 📝 **Post Management**
   - Create, read, update, and delete posts
   - Image upload with Cloudinary integration
   - Automatic thumbnail management
@@ -50,14 +50,16 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - **Cloudinary asset cleanup before database deletion**
   - **Old thumbnails automatically deleted when uploading new ones**
   - Author-based authorization
+  - Admin and Super Admin post management
   - Published/draft status management
+  - Multipart form-data `published` field conversion to boolean
 
 - 📊 **API Logging**
   - Comprehensive API request/response logging
   - Error log tracking with filtering
   - Pagination support for log viewing
   - IP address and user tracking
-  - Super Admin log management
+  - Super Admin and Cashier log access
 
 - 📧 **Email Service**
   - Nodemailer integration with SMTP support
@@ -72,6 +74,12 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - Environment-based configuration
   - Validation errors with detailed messages
   - Query parameter sanitization
+  - Proper client IP detection (supports proxies)
+
+- 📚 **Documentation & Observability**
+  - Swagger UI with interactive testing, filters, and request duration display
+  - Persisted JWT authorization in Swagger UI across refreshes
+  - Detailed examples for request and response payloads
 
 - 🗄️ **Database**
   - PostgreSQL with Prisma ORM
@@ -87,11 +95,13 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 - **Language:** TypeScript
 - **Database:** PostgreSQL
 - **ORM:** Prisma 7.x
+- **Media Storage:** Cloudinary
 - **Authentication:** JWT (jsonwebtoken)
 - **Validation:** Zod
 - **Email:** Nodemailer
 - **Password Hashing:** bcryptjs
 - **HTTP Status:** http-status-codes
+- **API Docs:** Swagger UI (OpenAPI)
 
 ## 📁 Project Structure
 
@@ -137,6 +147,22 @@ POS_Backend/Inventory/
 ├── server.ts            # Server entry point
 ├── prisma.config.ts     # Prisma configuration
 └── tsconfig.json        # TypeScript configuration
+```
+
+## 🧭 Project Overview Flowchart
+
+```mermaid
+flowchart TD
+  Client[Web/Mobile Client] -->|HTTP| API[Express API]
+  API --> Swagger[Swagger UI / OpenAPI]
+  API --> Middleware[Middleware: Auth, RBAC, Validation, Rate Limit]
+  Middleware --> Routes[Route Handlers]
+  Routes --> Modules[Modules: Auth, User, Post, API Log]
+  Modules --> Prisma[Prisma ORM]
+  Prisma --> DB[(PostgreSQL)]
+  Modules --> Cloudinary[Cloudinary]
+  Modules --> Email[Nodemailer/SMTP]
+  Modules --> Logs[(API Logs)]
 ```
 
 ## 📋 Prerequisites

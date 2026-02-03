@@ -67,7 +67,6 @@ Updates the profile of the currently authenticated user.
   "name": "John Updated",
   "email": "john.updated@example.example.com"
 }
-}
 ```
 
 #### Success Response (200 OK)

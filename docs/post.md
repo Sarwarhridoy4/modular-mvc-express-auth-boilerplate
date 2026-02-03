@@ -9,6 +9,7 @@ This document provides details about the API endpoints for managing posts with C
 - ✅ Transaction-based deletion for data consistency
 - ✅ Old thumbnails automatically deleted when updating
 - ✅ Author-based authorization
+- ✅ ADMIN and SUPER_ADMIN roles can manage posts
 - ✅ RESTful API design
 
 ## Endpoints
@@ -17,8 +18,8 @@ This document provides details about the API endpoints for managing posts with C
 
 -   **URL:** `/posts`
 -   **Method:** `POST`
--   **Description:** Creates a new post with optional thumbnail image. Only users with `ADMIN` or `CASHIER` role can create posts.
--   **Authentication:** Requires a valid JWT token with `ADMIN` or `CASHIER` role.
+-   **Description:** Creates a new post with optional thumbnail image. Only users with `ADMIN` or `SUPER_ADMIN` role can create posts.
+-   **Authentication:** Requires a valid JWT token with `ADMIN` or `SUPER_ADMIN` role.
 -   **Request Body (`multipart/form-data`):**
     -   `title` (string, required): The title of the post.
     -   `content` (string, optional): The content of the post.
@@ -59,7 +60,7 @@ This document provides details about the API endpoints for managing posts with C
 -   **URL:** `/posts/{id}`
 -   **Method:** `PATCH`
 -   **Description:** Updates an existing post. Only the post author can update it. When uploading a new thumbnail, the old one is automatically deleted from Cloudinary using Prisma transactions.
--   **Authentication:** Requires a valid JWT token with `ADMIN` or `CASHIER` role.
+-   **Authentication:** Requires a valid JWT token with `ADMIN` or `SUPER_ADMIN` role.
 -   **Authorization:** Only the post author can update the post.
 -   **Parameters:**
     -   `id` (integer, path, required): The ID of the post to update.
@@ -87,7 +88,7 @@ This document provides details about the API endpoints for managing posts with C
 -   **URL:** `/posts/{id}`
 -   **Method:** `DELETE`
 -   **Description:** Permanently deletes a post and its associated thumbnail from Cloudinary. Only the post author can delete it.
--   **Authentication:** Requires a valid JWT token with `ADMIN` or `CASHIER` role.
+-   **Authentication:** Requires a valid JWT token with `ADMIN` or `SUPER_ADMIN` role.
 -   **Authorization:** Only the post author can delete the post.
 -   **Parameters:**
     -   `id` (integer, path, required): The ID of the post to delete.

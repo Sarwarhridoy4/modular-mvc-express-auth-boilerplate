@@ -8,7 +8,7 @@ This document provides details about the API endpoints for managing API logs and
 - ✅ Error log filtering and pagination
 - ✅ IP address and user tracking
 - ✅ Query parameter validation with Zod
-- ✅ Super Admin log management
+- ✅ Super Admin and Cashier error-log access
 
 ## Endpoints
 

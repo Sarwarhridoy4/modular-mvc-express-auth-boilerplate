@@ -58,7 +58,6 @@ Registers a new user in the system.
 ```
 
 **Note**: A welcome email is automatically sent to the user upon successful registration. The registration process succeeds even if the email delivery fails
-```
 
 ##### Data Fields
 
@@ -152,7 +151,9 @@ Initiates the login process, verifying credentials and sending an OTP for two-fa
     "isActive": true,
     "createdAt": "2026-01-28T00:00:00.000Z",
     "accessToken": "jwt_token",
-    "refreshToken": "jwt_refresh_token"
+    "refreshToken": "jwt_refresh_token",
+    "autoLogoutScheduled": false,
+    "autoLogoutMessage": null
   }
 }
 ```
@@ -169,22 +170,20 @@ Initiates the login process, verifying credentials and sending an OTP for two-fa
 | `createdAt`   | `string`  | Date and time the user was created (ISO 8601).  | `2026-01-28T00:00:00.000Z`   |
 | `accessToken` | `string`  | JWT token for authenticating further requests.  | `jwt_token`                  |
 | `refreshToken`| `string`  | JWT refresh token for obtaining new access tokens.| `jwt_refresh_token`          |
+| `autoLogoutScheduled` | `boolean` | Indicates if an older session was terminated due to the two-device limit. | `false` |
+| `autoLogoutMessage` | `string \| null` | Optional message describing auto-logout behavior. | `null` |
 
-#### Error Response (403 Forbidden - Device Limit Exceeded)
+#### Session Limit Behavior
 
-```json
-{
-  "success": false,
-  "statusCode": 403,
-  "message": "You have reached the maximum number of active devices (2). Please log out from another device."
-}
-```
+- If a third device logs in, the oldest active session is automatically terminated.
+- The response includes `autoLogoutScheduled=true` and a message indicating the delayed logout behavior on the new session.
 
 #### Security Features
 - OTP expires after 5 minutes
 - Rate limiting: 3 OTP requests per 30 minutes
 - Account blocked for 10 minutes after exceeding rate limit
 - Invalid OTP returns HTTP 401 (Unauthorized)
+- Client IP and user-agent are captured for session tracking
 
 ---
 
@@ -203,7 +202,6 @@ Invalidates the current user session and clears authentication cookies.
   "statusCode": 200,
   "message": "User Logged Out Successfully",
   "data": null
-}
 }
 ```
 
@@ -374,7 +372,6 @@ Requests a new OTP to be sent to the user's email.
   "message": "Too many OTP requests. Please try again after 10 minutes.",
   "data": null
 }
-}
 ```
 
 ##### Response Fields
@@ -432,19 +429,29 @@ Verifies a provided OTP without initiating a full login flow (useful for other O
 | `message`   | `string`  | A descriptive message about the outcome. | `OTP verified successfully` |
 | `data`      | `null`    | Data is not explicitly defined in the original document. Assuming null for generic success. | `null`                   |
 
+#### Error Response (403 Forbidden - Device Limit Exceeded)
+
+```json
+{
+  "success": false,
+  "statusCode": 403,
+  "message": "You have reached the maximum number of active devices (2). Please log out from another device."
+}
+```
+
 ## API Flowchart
 
 ```mermaid
 graph TD
     subgraph Authentication Endpoints
-        signup[/POST /auth/signup\] --> signupCtrl[authController.signupUser]
-        login[/POST /auth/login\] --> loginCtrl[authController.loginWithEmailAndPassword]
-        verifyOtp[/POST /auth/login/verify-otp\] --> verifyOtpCtrl[authController.loginWithOTP]
-        logout[/POST /auth/logout\] --> logoutCtrl[authController.logout]
-        forgotPassword[/POST /auth/forgot-password\] --> forgotPasswordCtrl[authController.forgotPassword]
-        resetPassword[/POST /auth/reset-password\] --> resetPasswordCtrl[authController.resetPassword]
-        requestOtp[/POST /auth/request-otp\] --> requestOtpCtrl[authController.requestOTP]
-        generalVerifyOtp[/POST /auth/verify-otp\] --> generalVerifyOtpCtrl[authController.verifyOTP]
+        signup["POST /auth/signup"] --> signupCtrl[authController.signupUser]
+        login["POST /auth/login"] --> loginCtrl[authController.loginWithEmailAndPassword]
+        verifyOtp["POST /auth/login/verify-otp"] --> verifyOtpCtrl[authController.loginWithOTP]
+        logout["POST /auth/logout"] --> logoutCtrl[authController.logout]
+        forgotPassword["POST /auth/forgot-password"] --> forgotPasswordCtrl[authController.forgotPassword]
+        resetPassword["POST /auth/reset-password"] --> resetPasswordCtrl[authController.resetPassword]
+        requestOtp["POST /auth/request-otp"] --> requestOtpCtrl[authController.requestOTP]
+        generalVerifyOtp["POST /auth/verify-otp"] --> generalVerifyOtpCtrl[authController.verifyOTP]
     end
 
     signupCtrl --> success[Success]
