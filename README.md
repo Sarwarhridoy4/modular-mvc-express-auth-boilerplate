@@ -28,6 +28,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 - [Contributing](#contributing)
 - [License](#license)
 
+<a id="features"></a>
 ## ✨ Features
 
 - 🔐 **Authentication & Authorization**
@@ -97,6 +98,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
   - Prisma Studio for database visualization
   - Transaction support for atomic operations
 
+<a id="tech-stack"></a>
 ## 🚀 Tech Stack
 
 - **Runtime:** Node.js
@@ -112,6 +114,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 - **HTTP Status:** http-status-codes
 - **API Docs:** Swagger UI (OpenAPI)
 
+<a id="project-structure"></a>
 ## 📁 Project Structure
 
 ```
@@ -158,6 +161,7 @@ POS_Backend/Inventory/
 └── tsconfig.json        # TypeScript configuration
 ```
 
+<a id="project-overview-flowchart"></a>
 ## 🧭 Project Overview Flowchart
 
 ```mermaid
@@ -174,6 +178,7 @@ flowchart TD
   Modules --> Logs[(API Logs)]
 ```
 
+<a id="prerequisites"></a>
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
@@ -183,6 +188,7 @@ Before you begin, ensure you have the following installed:
 - **npm** or **bun** package manager
 - **Git**
 
+<a id="installation"></a>
 ## 🔧 Installation
 
 1. **Clone the repository**
@@ -212,6 +218,7 @@ bun install
 npm run generate
 ```
 
+<a id="environment-variables"></a>
 ## 🔐 Environment Variables
 
 Create a `.env` file in the root directory with the following variables:
@@ -246,6 +253,7 @@ SMTP_PASSWORD=your-app-password
 EMAIL_FROM=noreply@example.com
 ```
 
+<a id="email-setup-gmail-example"></a>
 ### 📧 Email Setup (Gmail Example)
 
 For Gmail SMTP:
@@ -254,6 +262,7 @@ For Gmail SMTP:
 2. Generate an App Password: https://myaccount.google.com/apppasswords
 3. Use the App Password in `SMTP_PASSWORD`
 
+<a id="database-setup"></a>
 ## 🗄️ Database Setup
 
 1. **Create PostgreSQL database**
@@ -280,6 +289,7 @@ npm run seed
 npm run studio
 ```
 
+<a id="database-commands-summary"></a>
 ### Database Commands Summary
 
 Here is a summary of essential Prisma commands for managing your database:
@@ -294,8 +304,10 @@ Here is a summary of essential Prisma commands for managing your database:
 | `npm run studio`          | Opens Prisma Studio, a visual editor for your database. It allows you to view, edit, and manage your data directly.                                                                                                                                                                                                                 | Useful for inspecting data and debugging during development.                                                                                                                                                            |
 | `npm run seed`            | Runs the seeding script to populate your database with initial data.                                                                                                                                                                                                                                                                  | **Before:** Ensure your database schema is up-to-date (`migrate:dev` or `migrate:deploy`). **After:** Verify that the expected data has been inserted into the database.                                             |
 
+<a id="running-the-application"></a>
 ## 🏃 Running the Application
 
+<a id="development-mode"></a>
 ### Development Mode
 
 ```bash
@@ -306,6 +318,7 @@ bun run dev
 
 The server will start at `http://localhost:5000` with hot-reload enabled.
 
+<a id="production-mode"></a>
 ### Production Mode
 
 1. **Build the project**
@@ -320,11 +333,13 @@ npm run build
 npm start
 ```
 
+<a id="api-documentation"></a>
 ## 📡 API Documentation
 
 For detailed API documentation, please see the [API Documentation Index](./docs/index.md) file.
 - Centralized API documentation now available under the `docs/` directory, providing detailed endpoints for Authentication, User Management, and more.
 
+<a id="swagger-ui"></a>
 ## 📄 Swagger UI
 
 This project includes Swagger UI for interactive API documentation. You can access it when the application is running.
@@ -333,8 +348,10 @@ This project includes Swagger UI for interactive API documentation. You can acce
 
 ---
 
+<a id="deployment"></a>
 ## 🚀 Deployment
 
+<a id="vercel-deployment"></a>
 ### Vercel Deployment
 
 1. **Install Vercel CLI**
@@ -349,10 +366,12 @@ npm install -g vercel
 vercel --prod
 ```
 
+<a id="live-demo"></a>
 ### Live Demo
 
 You can access the live demo of the application here: [POS Inventory Backend](https://pos-inventory-backend-sable.vercel.app)
 
+<a id="environment-setup"></a>
 ### Environment Setup
 
 Make sure to set all environment variables in your deployment platform:
@@ -361,12 +380,14 @@ Make sure to set all environment variables in your deployment platform:
 - Heroku: Config Vars
 - AWS/DigitalOcean: Environment configuration
 
+<a id="database-migration-on-deploy"></a>
 ### Database Migration on Deploy
 
 ```bash
 npm run migrate:deploy
 ```
 
+<a id="security-best-practices"></a>
 ## 🛡️ Security Best Practices
 
 - ✅ All passwords are hashed using bcrypt
@@ -387,10 +408,12 @@ npm run migrate:deploy
 - ✅ Email verification for password resets and OTP delivery
 - ✅ Automatic session management (max 2 concurrent devices)
 
+<a id="contributing"></a>
 ## 🤝 Contributing
 
 We welcome contributions to this project! Please see the [CONTRIBUTING.md](./CONTRIBUTING.md) file for details on how to get started.
 
+<a id="license"></a>
 ## 📝 License
 
 This project is private and proprietary.
