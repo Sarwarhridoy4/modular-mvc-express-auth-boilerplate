@@ -70,10 +70,23 @@ import { postController } from './post.controller.js';
  *           type: integer
  *         message:
  *           type: string
+ *         meta:
+ *           $ref: '#/components/schemas/PaginationMeta'
  *         data:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/PostResponse'
+ *     PaginationMeta:
+ *       type: object
+ *       properties:
+ *         page:
+ *           type: integer
+ *         limit:
+ *           type: integer
+ *         total:
+ *           type: integer
+ *         totalPage:
+ *           type: integer
  *     UserResponseMinimal:
  *       type: object
  *       properties:
@@ -199,8 +212,42 @@ router.post(
  * /posts:
  *   get:
  *     summary: Get all posts (Public endpoint)
- *     description: Retrieve a list of all posts. This endpoint is public and does not require authentication.
+ *     description: |
+ *       Retrieve a list of all posts. This endpoint is public and does not require authentication.
+ *
+ *       **Optional query params:**
+ *       - `page` (number): page number (enables pagination)
+ *       - `limit` (number): page size (enables pagination)
+ *       - `sort` (string): field to sort by, use `-field` for desc
+ *       - `searchTerm` (string): search by title/content
+ *       - `fields` (string): comma-separated fields to include
  *     tags: [Post]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Page size for pagination
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *         description: Sort field, prefix with '-' for descending (e.g., -id)
+ *       - in: query
+ *         name: searchTerm
+ *         schema:
+ *           type: string
+ *         description: Search term for title/content
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *         description: Comma-separated list of fields to include
  *     responses:
  *       200:
  *         description: A list of posts retrieved successfully
@@ -212,6 +259,11 @@ router.post(
  *               success: true
  *               statusCode: 200
  *               message: "Posts retrieved successfully"
+ *               meta:
+ *                 page: 1
+ *                 limit: 10
+ *                 total: 42
+ *                 totalPage: 5
  *               data: []
  *       500:
  *         description: Internal server error

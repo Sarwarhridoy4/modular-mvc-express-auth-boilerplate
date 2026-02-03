@@ -44,13 +44,15 @@ const createPost = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getAllPosts = catchAsync(async (_req: Request, res: Response) => {
-  const posts = await postService.getAllPosts();
+const getAllPosts = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query as Record<string, string>;
+  const result = await postService.getAllPosts(query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: 'Posts retrieved successfully',
-    data: posts,
+    meta: result.meta,
+    data: result.data,
   });
 });
 

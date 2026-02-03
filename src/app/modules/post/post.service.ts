@@ -1,5 +1,6 @@
 import { prisma } from '../../../config/db.js';
 import { Post } from '@prisma/client';
+import { PrismaQueryBuilder } from '../../../utils/prismaQueryBuilder.js';
 
 // Define an extended Post type to ensure TypeScript recognizes the thumbnail fields
 type ExtendedPost = Post & {
@@ -33,8 +34,31 @@ const createPost = async (data: CreatePostInput): Promise<Post> => {
   });
 };
 
-const getAllPosts = async (): Promise<Post[]> => {
-  return prisma.post.findMany({
+interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPage: number;
+}
+
+const getAllPosts = async (
+  query: Record<string, string> = {},
+): Promise<{ data: Post[]; meta?: PaginationMeta }> => {
+  const builderQuery: Record<string, string> = { ...query };
+  builderQuery.sort = builderQuery.sort || '-id';
+
+  const builder = new PrismaQueryBuilder(prisma, 'post', builderQuery);
+  builder.filter().search(['title', 'content']).sort().fields();
+
+  const shouldPaginate = Boolean(builderQuery.page || builderQuery.limit);
+  if (shouldPaginate) {
+    builder.paginate();
+  }
+
+  const prismaOptions = builder.build();
+
+  const data = await prisma.post.findMany({
+    ...prismaOptions,
     include: {
       author: {
         select: {
@@ -45,6 +69,13 @@ const getAllPosts = async (): Promise<Post[]> => {
       },
     },
   });
+
+  if (!shouldPaginate) {
+    return { data };
+  }
+
+  const meta = await builder.getMeta();
+  return { data, meta };
 };
 
 const getSinglePost = async (id: number): Promise<ExtendedPost | null> => {

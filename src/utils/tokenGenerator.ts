@@ -21,6 +21,14 @@ export const generateResetToken = (): string => {
 };
 
 /**
+ * Hash a reset token for secure storage.
+ * Uses SHA-256 so the raw token is never stored in the database.
+ */
+export const hashResetToken = (token: string): string => {
+  return crypto.createHash("sha256").update(token).digest("hex");
+};
+
+/**
  * Calculates the expiration time for a token.
  *
  * This function returns a `Date` object representing a point in time

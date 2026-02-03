@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 /**
  * 🔐 OTP (One-Time Password) Utilities
  * Secure 6-digit OTP generation and validation
@@ -14,6 +16,25 @@
  */
 export const generateOTP = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+/**
+ * Hash an OTP for secure storage.
+ * Uses SHA-256 so we never store the raw code in the database.
+ */
+export const hashOTP = (otp: string): string => {
+  return crypto.createHash("sha256").update(otp).digest("hex");
+};
+
+/**
+ * Verify a provided OTP against a stored hash using a timing-safe compare.
+ */
+export const verifyOTPHash = (otp: string, hashed: string): boolean => {
+  const candidate = hashOTP(otp);
+  const a = Buffer.from(candidate, "hex");
+  const b = Buffer.from(hashed, "hex");
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
 };
 
 /**

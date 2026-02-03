@@ -1,9 +1,20 @@
 import { Response } from "express";
+import { env } from "../config/env.js";
 
 export interface AuthTokens {
   accessToken?: string;
   refreshToken?: string;
 }
+
+const getCookieOptions = () => {
+  const isProd = env.NODE_ENV === "production";
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    path: "/",
+  } as const;
+};
 
 /**
  * Sets authentication cookies (accessToken and refreshToken) in the response.
@@ -40,23 +51,19 @@ export const setAuthCookie = (
   accessTokenExpiryMs = 15 * 60 * 1000, // 15 min default
   refreshTokenExpiryMs = 7 * 24 * 60 * 60 * 1000 // 7 days default
 ) => {
+  const baseOptions = getCookieOptions();
+
   if (tokenInfo.accessToken) {
     res.cookie("accessToken", tokenInfo.accessToken, {
-      httpOnly: true,
-      secure: true, // only HTTPS in prod
-      sameSite: "none",
+      ...baseOptions,
       maxAge: accessTokenExpiryMs,
-      path: "/",
     });
   }
 
   if (tokenInfo.refreshToken) {
     res.cookie("refreshToken", tokenInfo.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      ...baseOptions,
       maxAge: refreshTokenExpiryMs,
-      path: "/",
     });
   }
 };
@@ -78,6 +85,7 @@ export const setAuthCookie = (
  * res.status(200).json({ message: 'Logged out successfully' });
  */
 export const clearAuthCookie = (res: Response) => {
-  res.clearCookie("accessToken", { path: "/" });
-  res.clearCookie("refreshToken", { path: "/" });
+  const baseOptions = getCookieOptions();
+  res.clearCookie("accessToken", baseOptions);
+  res.clearCookie("refreshToken", baseOptions);
 };

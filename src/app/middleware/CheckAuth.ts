@@ -51,7 +51,12 @@ export const checkAuth =
   (...authRoles: string[]) =>
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      const accessToken = req.cookies?.accessToken;
+      const cookieToken = req.cookies?.accessToken;
+      const authHeader = req.headers.authorization;
+      const bearerToken = authHeader?.startsWith("Bearer ")
+        ? authHeader.slice(7).trim()
+        : undefined;
+      const accessToken = cookieToken || bearerToken;
 
       if (!accessToken) {
         throw new AppError(403, "No token received");
@@ -72,6 +77,22 @@ export const checkAuth =
 
       if (!user) {
         throw new AppError(StatusCodes.BAD_REQUEST, "User does not exist");
+      }
+
+      if (!user.isActive) {
+        throw new AppError(StatusCodes.FORBIDDEN, "User account is inactive");
+      }
+
+      if (!verifiedToken.sessionId) {
+        throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid session");
+      }
+
+      const session = await prisma.userSession.findUnique({
+        where: { id: verifiedToken.sessionId },
+      });
+
+      if (!session || session.userId !== user.id) {
+        throw new AppError(StatusCodes.UNAUTHORIZED, "Session expired or invalid");
       }
 
       if (!authRoles.includes(verifiedToken.role)) {

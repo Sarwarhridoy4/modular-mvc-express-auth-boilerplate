@@ -10,6 +10,8 @@ import {
   verifyOTPSchema,
   loginWithOTPSchema,
 } from "./auth.validation.js";
+import { checkAuth } from "../../middleware/CheckAuth.js";
+import { UserRole } from "@prisma/client";
 
 /**
  * @swagger
@@ -366,7 +368,11 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post("/logout", authController.logout);
+router.post(
+  "/logout",
+  checkAuth(UserRole.CASHIER, UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  authController.logout,
+);
 /**
  * @swagger
  * /forgot-password:
