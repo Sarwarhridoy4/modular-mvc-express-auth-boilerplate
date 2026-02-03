@@ -7,6 +7,7 @@ A robust and scalable REST API backend for Point of Sale (POS) and Inventory Man
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
+- [Project Overview Flowchart](#project-overview-flowchart)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
