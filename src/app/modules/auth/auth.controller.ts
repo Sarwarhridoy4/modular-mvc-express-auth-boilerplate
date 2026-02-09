@@ -2,8 +2,8 @@ import { StatusCodes } from "http-status-codes";
 import { catchAsync } from "../../../utils/catchAsync.js";
 import { sendResponse } from "../../../utils/sendResponse.js";
 import authService from "./auth.service.js";
-import type { CookieOptions, NextFunction, Request, Response } from "express";
-import { setAuthCookie } from "../../../utils/setCookie.js";
+import type { NextFunction, Request, Response } from "express";
+import { clearAuthCookie, setAuthCookie } from "../../../utils/setCookie.js";
 import { getClientIp } from "../../../utils/getClientIp.js";
 
 const signupUser = catchAsync(async (req: Request, res: Response) => {
@@ -68,12 +68,6 @@ const loginWithOTP = catchAsync(async (req: Request, res: Response) => {
 
 const logout = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
-    const cookieOptions: CookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    };
-
     // Check if req.user and req.user.sessionId exist and is a string
     if (req.user && typeof req.user.sessionId === 'string') {
       await authService.logoutUser(req.user.sessionId);
@@ -82,8 +76,7 @@ const logout = catchAsync(
       console.warn("Session ID not found or invalid type during logout. Skipping session deletion.");
     }
 
-    res.clearCookie("accessToken", cookieOptions);
-    res.clearCookie("refreshToken", cookieOptions);
+    clearAuthCookie(res);
 
     sendResponse(res, {
       success: true,

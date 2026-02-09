@@ -18,6 +18,7 @@ import { sendEmail } from "../../../utils/sendEmail.js";
 import {
   generateResetToken,
   getTokenExpirationTime,
+  hashResetToken,
 } from "../../../utils/tokenGenerator.js";
 import {
   generateOTP,
@@ -26,6 +27,8 @@ import {
   isOTPBlocked,
   getOTPBlockDuration,
   isOTPAttemptWindowExpired,
+  hashOTP,
+  verifyOTPHash,
 } from "../../../utils/otpGenerator.js";
 
 const signupUser = async (payload: SignupPayload) => {
@@ -141,6 +144,7 @@ const loginWithEmailAndPassword = async (
 
   // Generate new OTP
   const otp = generateOTP();
+  const otpHash = hashOTP(otp);
   const otpExpires = getOTPExpirationTime();
   const now = new Date();
 
@@ -148,7 +152,7 @@ const loginWithEmailAndPassword = async (
   await prisma.user.update({
     where: { id: user.id },
     data: {
-      otpCode: otp,
+      otpCode: otpHash,
       otpExpiresAt: otpExpires,
       otpAttempts: otpAttempts + 1,
       // Set window start time if this is the first attempt in the window
@@ -229,7 +233,7 @@ const loginWithOTP = async (
   }
 
   // Verify OTP matches
-  if (user.otpCode !== payload.otp) {
+  if (!verifyOTPHash(payload.otp, user.otpCode)) {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid OTP");
   }
 
@@ -296,13 +300,14 @@ const forgotPassword = async (payload: ForgotPasswordPayload) => {
 
   // Generate reset token
   const resetToken = generateResetToken();
+  const resetTokenHash = hashResetToken(resetToken);
   const tokenExpiration = getTokenExpirationTime(10); // 10 minutes
 
   // Save token to database
   await prisma.user.update({
     where: { id: user.id },
     data: {
-      passwordResetToken: resetToken,
+      passwordResetToken: resetTokenHash,
       passwordResetExpires: tokenExpiration,
     },
   });
@@ -343,12 +348,11 @@ const forgotPassword = async (payload: ForgotPasswordPayload) => {
  */
 const resetPassword = async (payload: ResetPasswordPayload) => {
   const { token, password } = payload;
-  console.log("Resetting password with token:", token);
 
   // Find user with valid reset token
   const user = await prisma.user.findFirst({
     where: {
-      passwordResetToken: token,
+      passwordResetToken: hashResetToken(token),
       passwordResetExpires: {
         gt: new Date(), // Token not expired
       },
@@ -440,6 +444,7 @@ const requestOTP = async (payload: RequestOTPPayload) => {
 
   // Generate new OTP
   const otp = generateOTP();
+  const otpHash = hashOTP(otp);
   const otpExpires = getOTPExpirationTime();
   const now = new Date();
 
@@ -447,7 +452,7 @@ const requestOTP = async (payload: RequestOTPPayload) => {
   await prisma.user.update({
     where: { id: user.id },
     data: {
-      otpCode: otp,
+      otpCode: otpHash,
       otpExpiresAt: otpExpires,
       otpAttempts: otpAttempts + 1,
       // Set window start time if this is the first attempt in the window
@@ -527,7 +532,7 @@ const verifyOTP = async (
   }
 
   // Verify OTP matches
-  if (user.otpCode !== payload.otp) {
+  if (!verifyOTPHash(payload.otp, user.otpCode)) {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid OTP");
   }
 

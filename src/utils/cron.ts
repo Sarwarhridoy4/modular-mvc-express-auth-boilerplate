@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { prisma } from '../config/db';
+import { prisma } from '../config/db.js';
 
 // Schedule a job to run every day at midnight to delete logs older than 15 days
 cron.schedule('0 0 * * *', async () => {
