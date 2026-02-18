@@ -30,7 +30,10 @@ type UpdatePostInput = {
 
 const createPost = async (data: CreatePostInput): Promise<Post> => {
   return prisma.post.create({
-    data,
+    data: {
+      id: crypto.randomUUID(),
+      ...data,
+    },
   });
 };
 
@@ -78,7 +81,7 @@ const getAllPosts = async (
   return { data, meta };
 };
 
-const getSinglePost = async (id: number): Promise<ExtendedPost | null> => {
+const getSinglePost = async (id: string): Promise<ExtendedPost | null> => {
   return prisma.post.findUnique({
     where: { id },
     include: {
@@ -94,7 +97,7 @@ const getSinglePost = async (id: number): Promise<ExtendedPost | null> => {
 };
 
 const updatePost = async (
-  id: number,
+  id: string,
   data: UpdatePostInput,
   oldThumbnailPublicId?: string
 ): Promise<Post> => {
@@ -119,7 +122,7 @@ const updatePost = async (
   });
 };
 
-const deletePost = async (id: number): Promise<Post> => {
+const deletePost = async (id: string): Promise<Post> => {
   // First, find the post outside transaction to get the thumbnailPublicId
   const post = await prisma.post.findUnique({
     where: { id },

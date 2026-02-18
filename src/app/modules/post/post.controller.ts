@@ -58,7 +58,8 @@ const getAllPosts = catchAsync(async (req: Request, res: Response) => {
 
 const getSinglePost = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const post = await postService.getSinglePost(Number(id));
+  const postId = Array.isArray(id) ? id[0] : id;
+  const post = await postService.getSinglePost(postId);
   if (!post) {
     return sendResponse(res, {
       success: false,
@@ -77,6 +78,7 @@ const getSinglePost = catchAsync(async (req: Request, res: Response) => {
 
 const updatePost = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+  const postId = Array.isArray(id) ? id[0] : id;
   const { title, content, published } = req.body;
   const authorId = req.user?.id;
 
@@ -89,7 +91,7 @@ const updatePost = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  const existingPost = await postService.getSinglePost(Number(id));
+  const existingPost = await postService.getSinglePost(postId);
 
   if (!existingPost || existingPost.authorId !== authorId) {
     return sendResponse(res, {
@@ -119,7 +121,7 @@ const updatePost = catchAsync(async (req: Request, res: Response) => {
   }
 
   const updatedPost = await postService.updatePost(
-    Number(id),
+    postId,
     {
       title,
       content,
@@ -140,6 +142,7 @@ const updatePost = catchAsync(async (req: Request, res: Response) => {
 
 const deletePost = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+  const postId = Array.isArray(id) ? id[0] : id;
   const authorId = req.user?.id;
 
   if (!authorId) {
@@ -150,7 +153,7 @@ const deletePost = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  const existingPost = await postService.getSinglePost(Number(id));
+  const existingPost = await postService.getSinglePost(postId);
 
   if (!existingPost || existingPost.authorId !== authorId) {
     return sendResponse(res, {
@@ -161,7 +164,7 @@ const deletePost = catchAsync(async (req: Request, res: Response) => {
   }
 
   // Delete post with transaction (Cloudinary deletion happens inside transaction)
-  const deletedPost = await postService.deletePost(Number(id));
+  const deletedPost = await postService.deletePost(postId);
 
   sendResponse(res, {
     success: true,

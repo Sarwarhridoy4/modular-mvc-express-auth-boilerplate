@@ -7,7 +7,7 @@ const clearApiLogs = async () => {
   return result;
 };
 
-const getPaginatedErrorLogsForAdmin = async (query: GetErrorLogsInput['query']) => {
+const getPaginatedErrorLogsForAdmin = async (query: GetErrorLogsInput) => {
   const { error, ...restQuery } = query;
 
   const builderQuery: Record<string, string> = {};
