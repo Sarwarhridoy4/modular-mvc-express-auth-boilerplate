@@ -1,6 +1,6 @@
-# Modular MVC Express Boilerplate (TypeScript + Prisma)
+# Modular MVC Express Boilerplate (Prisma)
 
-A production-ready backend boilerplate built with Node.js, Express, TypeScript, Prisma ORM, and PostgreSQL.
+A production-ready boilerplate built with Node.js, Express, Prisma ORM, and PostgreSQL.
 It follows a modular MVC-style architecture and includes authentication, authorization, validation, logging, and API documentation out of the box.
 
 ## Features
@@ -25,7 +25,6 @@ It follows a modular MVC-style architecture and includes authentication, authori
 ## Tech Stack
 
 - Node.js + Express 5
-- TypeScript
 - PostgreSQL
 - Prisma
 - Zod
@@ -67,7 +66,7 @@ It follows a modular MVC-style architecture and includes authentication, authori
 
 ```bash
 git clone <repository-url>
-cd POS_INVENTORY_BACKEND
+cd project
 npm install
 npm run generate
 ```
@@ -75,6 +74,12 @@ npm run generate
 ## Environment Variables
 
 Create `.env` based on `.env.example` and set values like:
+
+Generate a bcrypt hash locally before setting `ADMIN_PASSWORD_HASH`:
+
+```bash
+node -e "const bcrypt=require('bcryptjs');bcrypt.hash('YourStrongAdminPass!2026#A9fL',12).then(h=>console.log(h))"
+```
 
 ```env
 PORT=5000
@@ -86,7 +91,9 @@ FRONTEND_URL_PRODUCTION=https://your-frontend.com
 DATABASE_URL=postgresql://username:password@localhost:5432/your_db
 
 BYCRYPT_SALT_ROUNDS=12
-ADMIN_PASSWORD=your_admin_password
+ADMIN_PASSWORD_HASH=$2b$12$replace_with_bcrypt_hash
+# Optional fallback (not recommended)
+# ADMIN_PASSWORD=use_a_long_high_entropy_password
 
 JWT_ACCESS_TOKEN_SECRET=your_access_secret
 JWT_ACCESS_TOKEN_EXPIRES_IN=15m
@@ -114,7 +121,7 @@ npm run seed
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Development mode |
-| `npm run build` | Build TypeScript |
+| `npm run build` | Build app |
 | `npm start` | Run production build |
 | `npm run lint` | Run ESLint |
 | `npm run migrate:dev` | Create/apply migration |

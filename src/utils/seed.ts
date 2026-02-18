@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { env } from '../config/env.js';
 import { prisma } from '../config/db.js';
 
+const BCRYPT_HASH_REGEX = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/;
+
 /**
  * Seeds the database with initial user data for different roles.
  *
@@ -19,10 +21,24 @@ import { prisma } from '../config/db.js';
  * // or `node dist/utils/seed.js` (after TypeScript compilation)
  */
 async function main() {
-  const hashedPassword = await bcrypt.hash(
-    env.ADMIN_PASSWORD || "admin123",
-    Number(env.BYCRYPT_SALT_ROUNDS) || 10
-  );
+  let hashedPassword = env.ADMIN_PASSWORD_HASH;
+
+  if (!hashedPassword) {
+    if (!env.ADMIN_PASSWORD) {
+      throw new Error(
+        "Missing admin seed credential. Set ADMIN_PASSWORD_HASH (recommended) or ADMIN_PASSWORD in .env."
+      );
+    }
+
+    hashedPassword = await bcrypt.hash(
+      env.ADMIN_PASSWORD,
+      Number(env.BYCRYPT_SALT_ROUNDS) || 10
+    );
+  } else if (!BCRYPT_HASH_REGEX.test(hashedPassword)) {
+    throw new Error(
+      "Invalid ADMIN_PASSWORD_HASH format. Provide a valid bcrypt hash (e.g. starts with $2b$...)."
+    );
+  }
 
   // Seed Super Admin
   const superAdmin = await prisma.user.upsert({

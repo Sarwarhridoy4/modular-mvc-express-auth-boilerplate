@@ -19,13 +19,14 @@ const signupUser = catchAsync(async (req: Request, res: Response) => {
 const loginWithEmailAndPassword = catchAsync(
   async (req: Request, res: Response) => {
     const result = await authService.loginWithEmailAndPassword(req.body);
+    const { message, email } = result;
     
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
-      message: result.message,
+      message,
       data: {
-        email: result.email,
+        email,
         requiresOTP: true,
       },
     });

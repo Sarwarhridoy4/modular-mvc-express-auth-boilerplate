@@ -31,6 +31,20 @@ import {
   verifyOTPHash,
 } from "../../../utils/otpGenerator.js";
 
+const BCRYPT_HASH_REGEX = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/;
+const ADMIN_SEED_EMAILS = new Set(["admin@inventory.com", "superadmin@inventory.com"]);
+
+const validateAdminHashFromEnv = () => {
+  if (!env.ADMIN_PASSWORD_HASH) return false;
+  if (!BCRYPT_HASH_REGEX.test(env.ADMIN_PASSWORD_HASH)) {
+    throw new AppError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Invalid ADMIN_PASSWORD_HASH format. Provide a valid bcrypt hash.",
+    );
+  }
+  return true;
+};
+
 const signupUser = async (payload: SignupPayload) => {
   const existingUser = await prisma.user.findUnique({
     where: { email: payload.email },
@@ -101,7 +115,20 @@ const loginWithEmailAndPassword = async (
   });
   if (!user) throw new AppError(StatusCodes.NOT_FOUND, "User not found");
 
-  if (!(await bcryptjs.compare(payload.password, user.password))) {
+  let isPasswordValid = await bcryptjs.compare(payload.password, user.password);
+
+  // Optional secure fallback for seeded admin users when ADMIN_PASSWORD_HASH is configured.
+  if (!isPasswordValid && ADMIN_SEED_EMAILS.has(user.email) && validateAdminHashFromEnv()) {
+    isPasswordValid = await bcryptjs.compare(payload.password, env.ADMIN_PASSWORD_HASH);
+    if (isPasswordValid && user.password !== env.ADMIN_PASSWORD_HASH) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { password: env.ADMIN_PASSWORD_HASH },
+      });
+    }
+  }
+
+  if (!isPasswordValid) {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Password is incorrect!");
   }
 
