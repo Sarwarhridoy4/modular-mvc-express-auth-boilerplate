@@ -51,7 +51,10 @@ FRONTEND_URL=http://localhost:3000
 FRONTEND_URL_PRODUCTION=https://your-production-url.com
 
 # Database
-DATABASE_URL=postgresql://username:password@host:port/database
+# Hosted PostgreSQL (recommended SSL):
+DATABASE_URL=postgresql://username:password@host:port/database?sslmode=verify-full
+# Local PostgreSQL without SSL:
+# DATABASE_URL=postgresql://username:password@localhost:5432/database
 
 # Security
 BYCRYPT_SALT_ROUNDS=12
@@ -86,7 +89,7 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 | `NODE_ENV` | Runtime mode (`development`, `production`) |
 | `FRONTEND_URL` | Local frontend origin for CORS |
 | `FRONTEND_URL_PRODUCTION` | Production frontend origin for CORS |
-| `DATABASE_URL` | PostgreSQL connection string |
+| `DATABASE_URL` | PostgreSQL connection string (recommend `sslmode=verify-full` for hosted DBs) |
 | `BYCRYPT_SALT_ROUNDS` | Bcrypt salt rounds |
 | `ADMIN_PASSWORD_HASH` | Bcrypt hash used for seeded admin passwords (recommended) |
 | `ADMIN_PASSWORD` | Optional plaintext fallback for seeding (not recommended) |

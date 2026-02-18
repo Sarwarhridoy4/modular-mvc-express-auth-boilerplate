@@ -97,7 +97,10 @@ NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
 FRONTEND_URL_PRODUCTION=https://your-frontend.com
 
-DATABASE_URL=postgresql://username:password@localhost:5432/your_db
+# Hosted PostgreSQL (recommended SSL):
+DATABASE_URL=postgresql://username:password@host:port/your_db?sslmode=verify-full
+# Local PostgreSQL without SSL:
+# DATABASE_URL=postgresql://username:password@localhost:5432/your_db
 
 BYCRYPT_SALT_ROUNDS=12
 ADMIN_PASSWORD_HASH=$2b$12$replace_with_bcrypt_hash
@@ -153,6 +156,7 @@ npm run seed
 - This project uses ESM; internal relative imports should include `.js` in source imports for reliable runtime resolution after build.
 - If deployment reports `Module "@prisma/client" has no exported member "UserRole"`, use `src/constants/userRole.ts` (already applied) instead of importing `UserRole` from Prisma client.
 - Admin seed/login credential is hash-first via `ADMIN_PASSWORD_HASH` (bcrypt). Plaintext `ADMIN_PASSWORD` is fallback only.
+- For PostgreSQL SSL warning compatibility, prefer `sslmode=verify-full` in `DATABASE_URL`.
 
 ## API Documentation
 
