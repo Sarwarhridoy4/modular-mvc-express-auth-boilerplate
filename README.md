@@ -75,10 +75,19 @@ npm run generate
 
 Create `.env` based on `.env.example` and set values like:
 
-Generate a bcrypt hash locally before setting `ADMIN_PASSWORD_HASH`:
+### How to get `ADMIN_PASSWORD_HASH`
+
+1. Run:
 
 ```bash
 node -e "const bcrypt=require('bcryptjs');bcrypt.hash('YourStrongAdminPass!2026#A9fL',12).then(h=>console.log(h))"
+```
+
+2. Copy the output hash (starts with `$2b$`).
+3. Put it in `.env`:
+
+```env
+ADMIN_PASSWORD_HASH=$2b$12$your_generated_hash_here
 ```
 
 ```env
