@@ -55,7 +55,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOpti
 app.get("/", (_req: Request, res: Response) => {
   res
     .status(StatusCodes.OK)
-    .json({ message: "welcome to the Inventory Management System API" });
+    .json({ message: "welcome to the Modular MVC Express Boilerplate API" });
 });
 
 // 404 Handler

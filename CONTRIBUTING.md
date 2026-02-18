@@ -1,4 +1,4 @@
-# Contributing to POS Backend
+# Contributing to Modular MVC Express Boilerplate
 
 First off, thank you for considering contributing to this project! Your help is greatly appreciated.
 

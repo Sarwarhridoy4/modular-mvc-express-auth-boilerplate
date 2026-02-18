@@ -1,8 +1,8 @@
 # API Documentation Index
 
-Welcome to the API Documentation for the POS Backend Inventory Management System.
+Welcome to the API documentation for this modular MVC Express boilerplate.
 
-This documentation provides detailed information about each API endpoint, including examples, request/response formats, and authentication requirements. Each module now also includes API flowcharts for better visualization of the endpoint processes.
+This documentation provides endpoint details, request/response examples, and authentication/authorization requirements. It is structured by module for easier extension.
 
 ## Highlights & Recent Updates
 

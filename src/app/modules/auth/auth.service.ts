@@ -74,7 +74,7 @@ const signupUser = async (payload: SignupPayload) => {
 
     await sendEmail({
       to: user.email,
-      subject: "Welcome to POS Inventory System! 🎉",
+      subject: "Welcome to Modular MVC Express Boilerplate!",
       templateName: "welcomeEmail",
       templateData: {
         name: user.name,

@@ -5,10 +5,10 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'POS Inventory Backend API',
+      title: 'Modular MVC Express Boilerplate API',
       version: '1.0.0',
       description: `
-## API documentation for the POS Inventory Backend application.
+## API documentation for the Modular MVC Express Boilerplate application.
 
 ### How to Test APIs:
 1. First, authenticate using the \`/auth/login\` endpoint to get your JWT token

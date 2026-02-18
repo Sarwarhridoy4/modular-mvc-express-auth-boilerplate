@@ -162,7 +162,7 @@ This section describes the different user roles available in the system and thei
 
 -   **SUPER_ADMIN**: Full system access, including management of all other roles and system configurations.
 -   **ADMIN**: Administrative access, typically for managing users within their scope and specific application settings.
--   **CASHIER**: Basic access, limited to performing daily operational tasks within the POS system.
+-   **CASHIER**: Basic access role in this boilerplate setup (rename/customize based on your domain).
 
 ## API Flowchart
 

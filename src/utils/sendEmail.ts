@@ -55,7 +55,7 @@ interface SendEmailOptions {
  *       to: userEmail,
  *       subject: 'Welcome to Our Service!',
  *       templateName: 'welcome', // Assumes src/utils/templates/welcome.ejs exists
- *       templateData: { name: userName, appName: 'POS Inventory' },
+ *       templateData: { name: userName, appName: 'Modular MVC Boilerplate' },
  *     });
  *     console.log('Welcome email sent successfully.');
  *   } catch (error) {

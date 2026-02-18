@@ -1,5 +1,5 @@
 {
-  "name": "inventory",
+  "name": "modular-mvc-express-boilerplate",
   "module": "server.ts",
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
