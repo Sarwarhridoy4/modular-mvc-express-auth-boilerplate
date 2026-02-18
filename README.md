@@ -144,8 +144,15 @@ npm run seed
 - Access + refresh token flow
 - Route protection via `checkAuth(...)`
 - RBAC roles: `SUPER_ADMIN`, `ADMIN`, `CASHIER`
+- Role constants are maintained in `src/constants/userRole.ts` for runtime compatibility
 - OTP verification for login
 - Session validation through DB-backed session records
+
+## Deployment Notes
+
+- This project uses ESM; internal relative imports should include `.js` in source imports for reliable runtime resolution after build.
+- If deployment reports `Module "@prisma/client" has no exported member "UserRole"`, use `src/constants/userRole.ts` (already applied) instead of importing `UserRole` from Prisma client.
+- Admin seed/login credential is hash-first via `ADMIN_PASSWORD_HASH` (bcrypt). Plaintext `ADMIN_PASSWORD` is fallback only.
 
 ## API Documentation
 
