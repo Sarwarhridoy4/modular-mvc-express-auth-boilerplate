@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { catchAsync } from '../../../utils/catchAsync';
-import { apiLogService } from './api-log.service';
-import { sendResponse } from '../../../utils/sendResponse';
+import { catchAsync } from '../../../utils/catchAsync.js';
+import { apiLogService } from './api-log.service.js';
+import { sendResponse } from '../../../utils/sendResponse.js';
 import { StatusCodes } from 'http-status-codes';
-import { GetErrorLogsInput } from './api-log.validation';
+import { GetErrorLogsInput } from './api-log.validation.js';
 
 const clearApiLogs = catchAsync(async (_req: Request, res: Response) => {
   const result = await apiLogService.clearApiLogs();

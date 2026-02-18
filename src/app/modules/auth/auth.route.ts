@@ -11,7 +11,7 @@ import {
   loginWithOTPSchema,
 } from "./auth.validation.js";
 import { checkAuth } from "../../middleware/CheckAuth.js";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../../../constants/userRole.js";
 
 /**
  * @swagger

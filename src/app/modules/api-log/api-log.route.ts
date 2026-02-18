@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { apiLogController } from './api-log.controller';
-import { checkAuth } from '../../middleware/CheckAuth';
-import { UserRole } from '@prisma/client';
-import { zodValidator } from '../../middleware/zodValidator';
-import { getErrorLogsSchema } from './api-log.validation';
+import { apiLogController } from './api-log.controller.js';
+import { checkAuth } from '../../middleware/CheckAuth.js';
+import { UserRole } from '../../../constants/userRole.js';
+import { zodValidator } from '../../middleware/zodValidator.js';
+import { getErrorLogsSchema } from './api-log.validation.js';
 
 /**
  * @swagger

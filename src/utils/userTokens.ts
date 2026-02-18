@@ -4,7 +4,7 @@ import { generateToken, verifyToken} from './jwt.js';
 import { env } from '../config/env.js';
 import AppError from '../helpers/errorHelper/AppError.js';
 import { prisma } from '../config/db.js';
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../constants/userRole.js";
 import { AuthJwtPayload } from '../app/modules/auth/auth.interface.js';
 
 /**

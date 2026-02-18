@@ -1,7 +1,7 @@
-import { UserRole } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 import { env } from "../../../config/env.js";
 import AppError from "../../../helpers/errorHelper/AppError.js";
+import { UserRole } from "../../../constants/userRole.js";
 import {
   LoginPayload,
   SignupPayload,

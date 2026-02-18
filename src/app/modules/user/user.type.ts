@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../../../constants/userRole.js";
 
 export type SafeUser = {
   id: string;

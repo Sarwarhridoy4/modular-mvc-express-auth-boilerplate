@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../constants/userRole.js";
 import bcrypt from "bcryptjs";
 import { env } from '../config/env.js';
 import { prisma } from '../config/db.js';
