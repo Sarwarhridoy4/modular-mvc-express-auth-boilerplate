@@ -2,7 +2,7 @@
   "name": "modular-mvc-express-boilerplate",
   "module": "server.ts",
   "dependencies": {
-    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.3.0",
     "@sendgrid/mail": "^8.1.6",
     "@types/http-status-codes": "^1.2.0",
